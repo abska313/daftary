@@ -1,6 +1,6 @@
 {
-  "name": "منظمي الدراسي",
-  "short_name": "منظمي",
+  "name": "دفتري",
+  "short_name": "دفتري",
   "description": "أداة بسيطة لتنظيم دراستك ومتابعة إنجازك.",
   "start_url": "./index.html",
   "scope": "./",
