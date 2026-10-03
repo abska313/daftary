@@ -8,3 +8,4 @@ self.addEventListener('fetch',e=>{
     return hit||net;
   })));
 });
+
