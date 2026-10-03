@@ -30,7 +30,7 @@ button.card{width:100%;text-align:start;font:inherit;cursor:pointer}.card.ex spa
 .ic{width:22px;height:22px;flex:none}
 .btn{border:0;border-radius:14px;padding:11px 18px;min-height:46px;font:inherit;font-weight:700;background:var(--btn);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin:4px 0}
 .btn:hover{background:var(--primary-light)}.btn.gold{background:var(--gold);color:var(--primary-dark)}.btn.gold:hover{background:var(--gold-light)}
-.btn.danger{background:var(--danger)}.btn.ghost{background:var(--surface2);color:var(--text)}.btn.block{display:flex;width:100%}.btn.sm{min-height:36px;padding:4px 12px;font-size:.82rem}
+.btn.danger{background:var(--danger)}.btn.ghost{background:var(--surface2);color:var(--text)}.btn.block{display:flex;width:100%}.btn.sm{min-height:34px;padding:4px 12px;font-size:.82rem}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.r2:has(input){grid-template-columns:1fr auto}.r2 input[type=date]{grid-column:auto}.r4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 input,select,textarea{width:100%;font:inherit;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);min-height:46px;margin:3px 0}
 textarea{min-height:64px;resize:vertical}input[type=checkbox]{width:auto;min-height:0}
@@ -54,6 +54,8 @@ nav a{flex:1;display:grid;justify-items:center;gap:1px;padding:8px 0 6px;font-si
 #toasts div{background:var(--primary-dark);color:#fff;border:1px solid var(--gold);border-radius:14px;padding:10px 16px;font-size:.9rem;max-width:90%}
 .ft{text-align:center;margin:22px 0 4px;color:var(--text-secondary);font-size:.82rem}.cr{display:flex;justify-content:center;gap:6px;align-items:center;margin:14px 0 0;font-size:.78rem;color:var(--text-muted)}
 .cr a{color:var(--active);text-decoration:none;display:inline-flex;gap:5px;align-items:center}.cr svg{width:14px;height:14px}
+summary{list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
 </style>
 </head>
 <body>
@@ -93,7 +95,7 @@ function archive(b){const w=b.week;if(!w||!(w.tasks.length||Object.values(w.note
 function fresh(b,start){b.week={start,tasks:(b.week?b.week.tasks:[]).filter(t=>t.rec).map(t=>({...t,id:uid(),done:false})),notes:{}}}
 function rollover(b,now=new Date()){const cur=wk(now,S.settings.ws);
  if(!b.week){fresh(b,cur);return true}
- if(b.week.start>=cur)return false; /* نفس الأسبوع، أو التاريخ رجع للخلف: لا نلمس البيانات */
+ if(b.week.start>=cur)return false;
  archive(b);fresh(b,cur);return true}
 
 /* ===== المنطق ===== */
@@ -114,41 +116,78 @@ function sheet(h){$('#sh').innerHTML=`<div class="bk" data-a="close"></div><div 
 function closeSheet(){$('#sh').hidden=true;$('#sh').innerHTML=''}
 function ask(msg,ok,fn,danger=true){sheet(`<p class="msg">${msg}</p><div class="r2"><button class="btn ghost" data-a="close">إلغاء</button><button class="btn ${danger?'danger':''}" data-a="yes">${ok}</button></div>`);A.yes=()=>{closeSheet();fn()}}
 const taskRow=(t,ro)=>`<div class="task ${t.done?'done':''}"><button class="ck" ${ro?'disabled':`data-a="tog" data-id="${t.id}"`} aria-label="إنجاز">${t.done?ic('check'):''}</button><button class="tb" ${ro?'disabled':`data-a="edit" data-id="${t.id}"`}><b>${esc(t.t)}</b><small>${esc(t.sn)} · ${PR[t.pr][0]} ${PR[t.pr][1]}${t.rec?' · 🔁':''}</small>${t.note?`<small>📝 ${esc(t.note)}</small>`:''}</button><button class="st ${t.star?'on':''}" ${ro?'disabled':`data-a="star" data-id="${t.id}"`} aria-label="للمراجعة">${ic('star')}</button></div>`;
-function dayBlocks(tasks,ro){const ds=[...new Set([...S.settings.days,...tasks.map(t=>t.day)])].sort((a,c)=>pos(a)-pos(c));
- return ds.map(d=>{const T=tasks.filter(t=>t.day===d),g={};T.forEach(t=>(g[t.sn]=g[t.sn]||[]).push(t));
-  return `<section class="card"><div class="dh"><b>${DN[d]}</b><small>${T.length} مهام · ${T.filter(t=>t.done).length} مكتملة</small></div>${T.length?Object.keys(g).map(n=>`<h3>${esc(n)}</h3>`+g[n].map(t=>taskRow(t,ro)).join('')).join(''):'<p class="mu">لا توجد مهام</p>'}</section>`}).join('')}
+
+function dayBlocks(tasks,ro,startIso){
+ const curIso=iso(new Date());
+ const ds=[...new Set([...S.settings.days,...tasks.map(t=>t.day)])].sort((a,c)=>pos(a)-pos(c));
+ return ds.map(d=>{
+  const dayDate=startIso?addD(startIso,pos(d)):null;
+  const isToday=dayDate===curIso;
+  const dtTxt=dayDate?` · ${fd(dayDate)}`:'';
+  const T=tasks.filter(t=>t.day===d),g={};
+  T.forEach(t=>(g[t.sn]=g[t.sn]||[]).push(t));
+  return `<section class="card ${isToday?'now':''}">
+    <div class="dh">
+      <b>${DN[d]} <span style="font-weight:normal;color:var(--text-secondary);font-size:.84rem">${dtTxt}</span> ${isToday?'<span class="chip on" style="font-size:.65rem;padding:2px 8px;margin-inline-start:4px">اليوم</span>':''}</b>
+      <small>${T.length} مهام · ${T.filter(t=>t.done).length} مكتملة</small>
+    </div>
+    ${T.length?Object.keys(g).map(n=>`<h3>${esc(n)}</h3>`+g[n].map(t=>taskRow(t,ro)).join('')).join(''):'<p class="mu">لا توجد مهام</p>'}
+  </section>`;
+ }).join('');
+}
+
 const fl=t=>{const q=F.q.trim();if(q&&!(t.t+' '+t.sn).includes(q))return false;return{all:1,done:t.done,todo:!t.done,high:t.pr==='h',star:t.star,late:!t.done&&pos(t.day)<pos(new Date().getDay())}[F.f]};
-const weekList=b=>dayBlocks(b.week.tasks.filter(fl),false);
+const weekList=b=>dayBlocks(b.week.tasks.filter(fl),false,b.week.start);
 const dayOpts=sel=>[...new Set([...S.settings.days,sel])].sort((a,c)=>pos(a)-pos(c)).map(d=>`<option value="${d}" ${d===sel?'selected':''}>${DN[d]}</option>`).join('');
 
 /* ===== الصفحات ===== */
 function pHome(b){const w=b.week,T=w.tasks,p=pct(T),td=new Date().getDay(),tt=T.filter(t=>t.day===td),nt=nowTask(b),ex=nextExam(b),
  hi=T.filter(t=>!t.done&&t.pr==='h'),rv=T.filter(t=>t.star),late=T.filter(t=>!t.done&&pos(t.day)<pos(td));
  const al=ex&&examT(ex)-Date.now()<7*864e5&&ready(ex)<70?`<div class="card warn">⚠️ لديك امتحان ${esc(ex.sname)} ${exState(ex)==='today'?'اليوم':'بعد '+cd(ex)}، وما زالت بعض مهام التحضير غير مكتملة.</div>`:'';
+ 
+ const fullWeekSchedule = `
+ <details class="card" style="margin:12px 0;border-color:var(--active)">
+   <summary style="cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center">
+     <span>📅 جدول الأسبوع بالكامل (${rng(w.start)})</span>
+     <span style="font-size:.82rem;color:var(--gold)">عرض / طي ▼</span>
+   </summary>
+   <div style="margin-top:14px">
+     ${dayBlocks(T,false,w.start)}
+   </div>
+ </details>`;
+
  return `<div class="card hero"><small>الأسبوع الحالي · ${rng(w.start)}</small><h2>إنجاز الأسبوع</h2><div class="big">${p}%</div>${prog(p)}<p class="mu">🎯 الهدف: ${S.settings.goal}% · الحالي: ${p}%</p><div class="st4"><span><b>${S.settings.days.length}</b>أيام دوام</span><span><b>${b.subjects.length}</b>مواد</span><span><b>${T.length}</b>مهمة</span><span><b>${T.filter(t=>t.done).length}</b>مكتملة</span></div></div>${al}
+${fullWeekSchedule}
 <h2>📅 مهام اليوم</h2>${tt.length?tt.map(t=>taskRow(t)).join(''):'<p class="mu card">لا توجد مهام لليوم.</p>'}
-<h2>🎯 ماذا أفعل الآن؟</h2>${nt?`<div class="card now"><small>ابدأ الآن بـ</small><b>${esc(nt.t)} — ${esc(nt.sn)}</b><p>${PR[nt.pr][0]} أولوية ${PR[nt.pr][1]}</p><button class="btn gold" data-a="tog" data-id="${nt.id}">إنجاز المهمة</button></div>`:'<p class="mu card">لا توجد مهام معلّقة.</p>'}
+<h2>🎯 ماذا أفعل الآن؟</h2>${nt?`<div class="card now"><small>ابدأ الآن بـ</small><b>${esc(nt.t)} —${esc(nt.sn)}</b><p>${PR[nt.pr][0]} أولوية ${PR[nt.pr][1]}</p><button class="btn gold" data-a="tog" data-id="${nt.id}">إنجاز المهمة</button></div>`:'<p class="mu card">لا توجد مهام معلّقة.</p>'}
 ${late.length?`<h2>⚠️ مهام تحتاج انتباه</h2>${late.map(t=>taskRow(t)+`<button class="btn ghost sm" data-a="move" data-id="${t.id}">نقل إلى اليوم التالي</button>`).join('')}`:''}
-${ex?`<h2>📝 الامتحان القادم</h2><button class="card ex" data-a="openEx" data-id="${ex.id}"><b>${esc(ex.sname)}</b><span>📅 ${DN[pd(ex.date).getDay()]} ${fd(ex.date)}</span><span>⏳ ${exState(ex)==='today'?'الامتحان اليوم':'باقي '+cd(ex)}</span><span>الاستعداد ${ready(ex)}%</span>${prog(ready(ex))}</button>`:''}
+${ex?`<h2>📝 الامتحان القادم</h2><button class="card ex" data-a="openEx" data-id="${ex.id}"><b>${esc(ex.sname)}</b><span>📅 ${DN[pd(ex.date).getDay()]} ${fd(ex.date)}</span><span>⏳${exState(ex)==='today'?'الامتحان اليوم':'باقي '+cd(ex)}</span><span>الاستعداد ${ready(ex)}\%</span>${prog(ready(ex))}</button>`:''}
 ${hi.length?`<h2>🔥 مهام مهمة</h2>${hi.slice(0,3).map(t=>taskRow(t)).join('')}`:''}${rv.length?`<h2>⭐ للمراجعة</h2>${rv.slice(0,5).map(t=>taskRow(t)).join('')}`:''}
 <div class="r2"><button class="btn" data-a="add">+ إضافة مهمة</button><button class="btn ghost" data-a="timer">⏱ جلسة دراسة</button></div>`}
+
 function pWeek(b){return `<h2>📅 ${rng(b.week.start)}</h2><input id="q" type="search" placeholder="🔍 البحث عن مادة أو مهمة" value="${esc(F.q)}"><div class="chips">${[['all','الكل'],['done','المكتمل'],['todo','غير المكتمل'],['high','أولوية عالية'],['star','للمراجعة'],['late','المتأخر']].map(([k,l])=>`<button class="chip ${F.f===k?'on':''}" data-a="fl" data-f="${k}"><span>${l}</span></button>`).join('')}</div><div id="wl">${weekList(b)}</div><button class="btn block" data-a="add">+ إضافة مهمة</button><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع</button>`}
-function pSubj(b){return `<h2>📚 المواد</h2>${b.subjects.length?b.subjects.map(s=>`<div class="card"><div class="dh"><b>${esc(s.name)}</b><span><button class="st" data-a="editSub" data-id="${s.id}" aria-label="تعديل">${ic('edit')}</button><button class="st" data-a="delSub" data-id="${s.id}" aria-label="حذف">${ic('trash')}</button></span></div><small>${s.days.map(d=>DN[d]).join(' + ')||'—'}</small><textarea data-note="${s.id}" placeholder="📝 ملاحظاتي لهذا الأسبوع">${esc(b.week.notes[s.id]||'')}</textarea></div>`).join(''):'<p class="mu card">لا توجد مواد بعد. أضف أول مادة لتبدأ.</p>'}<button class="btn block" data-a="addSub">+ إضافة مادة</button>`}
+
+function pSubj(b){return `<h2>📚 المواد</h2>${b.subjects.length?b.subjects.map(s=>`<div class="card"><div class="dh"><b>${esc(s.name)}</b><span><button class="st" data-a="editSub" data-id="${s.id}" aria-label="تعديل">${ic('edit')}</button><button class="st" data-a="delSub" data-id="${s.id}" aria-label="حذف">${ic('trash')}</button></span></div><small>${s.days.map(d=>DN[d]).join(' + ')\vert{}\vert{}'—'}</small>${(s.tg||s.lec)?`<div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">${s.tg?`<a href="${esc(s.tg)}" target="_blank" rel="noopener" class="btn ghost sm" style="text-decoration:none">📢 القناة</a>`:''}${s.lec?`<a href="${esc(s.lec)}" target="_blank" rel="noopener" class="btn ghost sm" style="text-decoration:none">🎥 المحاضرات</a>`:''}</div>`:''}<textarea data-note="${s.id}" placeholder="📝 ملاحظاتي لهذا الأسبوع">${esc(b.week.notes[s.id]||'')}</textarea></div>`).join(''):'<p class="mu card">لا توجد مواد بعد. أضف أول مادة لتبدأ.</p>'}<button class="btn block" data-a="addSub">+ إضافة مادة</button>`}
+
 function pExams(b){const t=iso(new Date()),up=b.exams.filter(e=>e.post||e.date>=t).sort((a,c)=>examT(a)-examT(c)),past=b.exams.filter(e=>!e.post&&e.date<t).sort((a,c)=>examT(c)-examT(a));
  const card=e=>{const[s,l]=ST[exState(e)];return `<button class="card ex" data-a="openEx" data-id="${e.id}"><b>${esc(e.sname)}</b><small>${s} ${l} · ${esc(e.type)}</small><span>📅 ${DN[pd(e.date).getDay()]} ${fd(e.date)}${e.time?' · '+e.time:''}</span>${exState(e)==='soon'?`<span>⏳ باقي ${cd(e)}</span>`:''}<span>📊 الاستعداد ${ready(e)}%</span>${prog(ready(e))}</button>`};
  return `<h2>📝 الامتحانات القادمة</h2>${up.length?up.map(card).join(''):'<p class="mu card">لا توجد امتحانات قادمة.</p>'}<button class="btn block" data-a="addEx">+ إضافة امتحان</button>${past.length?`<h2>الامتحانات السابقة</h2>${past.map(card).join('')}`:''}`}
+
 function pArch(b,id){if(id){const a=b.archive.find(x=>x.id===id);if(!a)return '<p class="card">الأسبوع غير موجود.</p>';
- return `<a href="#arch" class="btn ghost sm">→ رجوع</a><h2>📦 ${rng(a.start)} ${pd(a.start).getFullYear()}</h2><div class="card"><b>${a.pct}% إنجاز</b>${prog(a.pct)}<small>${a.subs.length} مواد · ${a.total} مهمة · ${a.done} مكتملة</small></div>${dayBlocks(a.tasks,true)}${a.subs.filter(s=>a.notes[s.id]).map(s=>`<div class="card"><b>📝 ${esc(s.name)}</b><p>${esc(a.notes[s.id])}</p></div>`).join('')}<button class="btn danger block" data-a="delArch" data-id="${a.id}">🗑 حذف الأسبوع</button>`}
- return `<h2>📦 المحفوظات</h2>${b.archive.length?b.archive.map(a=>`<a class="card ex" href="#arch/${a.id}"><b>${rng(a.start)} ${pd(a.start).getFullYear()}</b><span>${a.subs.length} مواد · ${a.total} مهمة · ${a.done} مكتملة</span><span>${a.pct}% إنجاز</span>${prog(a.pct)}</a>`).join('')+'<button class="btn danger block" data-a="delAll">🗑 حذف الكل</button>':'<p class="mu card">لا توجد أسابيع محفوظة بعد. تُحفظ الأسابيع هنا تلقائيًا.</p>'}`}
+ return `<a href="#arch" class="btn ghost sm">→ رجوع</a><h2>📦 ${rng(a.start)} ${pd(a.start).getFullYear()}</h2><div class="card"><b>${a.pct}% إنجاز</b>${prog(a.pct)}<small>${a.subs.length} مواد · ${a.total} مهمة · ${a.done} مكتملة</small></div>${dayBlocks(a.tasks,true,a.start)}${a.subs.filter(s=>a.notes[s.id]).map(s=>`<div class="card"><b>📝 ${esc(s.name)}</b><p>${esc(a.notes[s.id])}</p></div>`).join('')}<button class="btn danger block" data-a="delArch" data-id="${a.id}">🗑 حذف الأسبوع</button>`}
+ return `<h2>📦 المحفوظات</h2>${b.archive.length?b.archive.map(a=>`<a class="card ex" href="#arch/${a.id}"><b>${rng(a.start)} ${pd(a.start).getFullYear()}</b><span>${a.subs.length} مواد · ${a.total} مهمة · ${a.done} مكتملة</span><span>${a.pct}\% إنجاز</span>${prog(a.pct)}</a>`).join('')+'<button class="btn danger block" data-a="delAll">🗑 حذف الكل</button>':'<p class="mu card">لا توجد أسابيع محفوظة بعد. تُحفظ الأسابيع هنا تلقائيًا.</p>'}`}
+
 function pStats(b){const T=b.week.tasks,all=[...T,...b.archive.flatMap(a=>a.tasks)],m={};all.forEach(t=>{const o=m[t.sn]=m[t.sn]||{d:0,n:0};t.done?o.d++:o.n++});
  const e=Object.entries(m),top=[...e].sort((a,c)=>c[1].d-a[1].d)[0],need=e.filter(x=>x[1].n).sort((a,c)=>c[1].n-a[1].n)[0],mins=b.sessions.reduce((s,x)=>s+x.m,0);
  const row=(l,v)=>`<div class="card dh"><span>${l}</span><b>${v}</b></div>`;
  return `<h2>📊 إحصائياتي</h2>${row('نسبة إنجاز هذا الأسبوع',pct(T)+'%')}${row('المهام المكتملة (هذا الأسبوع)',T.filter(t=>t.done).length)}${row('عدد جلسات الدراسة',b.sessions.length)}${row('مجموع وقت الدراسة',mins+' دقيقة')}${row('الأسابيع المستخدمة',b.archive.length+1)}${row('أكثر مادة أنجزت فيها',top&&top[1].d?esc(top[0]):'—')}${row('أكثر مادة تحتاج اهتمامًا',need?esc(need[0]):'—')}`}
+
 function pSet(){const s=S.settings;return `<h2>📚 الكورس الدراسي</h2><div class="card"><div class="chips">${[1,2].map(n=>`<button class="chip ${s.course===n?'on':''}" data-a="course" data-n="${n}"><span>الكورس ${n===1?'الأول':'الثاني'}</span></button>`).join('')}</div><input id="yr" placeholder="السنة الدراسية (اختياري) مثل 2026 – 2027" value="${esc(s.year)}"></div>
 <h2>⚙️ الإعدادات</h2><div class="card"><button class="btn ghost block" data-a="theme">${document.documentElement.dataset.theme==='dark'?'☀️ الوضع النهاري':'🌙 الوضع الليلي'}</button><p class="mu">بداية الأسبوع</p><select id="ws">${DN.map((n,i)=>`<option value="${i}" ${s.ws===i?'selected':''}>${n}</option>`).join('')}</select><p class="mu">أيام الدوام</p><div class="chips">${DN.map((n,i)=>`<label class="chip"><input type="checkbox" name="wd" value="${i}" ${s.days.includes(i)?'checked':''}><span>${n}</span></label>`).join('')}</div><p class="mu">🎯 هدف الأسبوع (%)</p><input id="gl" type="number" min="10" max="100" value="${s.goal}"></div>
 <a class="btn ghost block" href="#stats">📊 إحصائياتي</a><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع</button>
 <h2>💾 النسخ الاحتياطي</h2><div class="r2"><button class="btn" data-a="exp">💾 تصدير البيانات</button><button class="btn ghost" data-a="imp">📥 استيراد البيانات</button></div><input type="file" id="fi" accept=".json,application/json" hidden>
 <div class="ft"><b>منظمي الدراسي</b><p>أداة بسيطة لتنظيم دراستك ومتابعة إنجازك.</p>${credit}</div>`}
+
 function render(){const[r,id]=location.hash.slice(1).split('/');R=r||'home';if(!S.settings.done)return onb();$('#ob').hidden=true;const b=B();
  const P={home:pHome,week:pWeek,subj:pSubj,exams:pExams,arch:pArch,set:pSet,stats:pStats}[R]||pHome;
  $('#app').innerHTML=P(b,id)+(R==='set'?'':credit);
@@ -158,10 +197,24 @@ function render(){const[r,id]=location.hash.slice(1).split('/');R=r||'home';if(!
 /* ===== النوافذ ===== */
 function taskSheet(id){const b=B(),t=id?b.week.tasks.find(x=>x.id===id):null;if(!b.subjects.length)return toast('أضف مادة أولًا من صفحة المواد');
  const td=new Date().getDay(),v=t||{t:'',sid:b.subjects[0].id,day:S.settings.days.includes(td)?td:S.settings.days[0]??0,pr:'m',note:'',star:false,rec:false};
- sheet(`<h2>${t?'تعديل مهمة':'مهمة جديدة'}</h2><input id="f_t" placeholder="اسم المهمة" value="${esc(v.t)}"><select id="f_s" aria-label="المادة">${b.subjects.map(s=>`<option value="${s.id}" ${s.id===v.sid?'selected':''}>${esc(s.name)}</option>`).join('')}</select><select id="f_d" aria-label="اليوم">${dayOpts(v.day)}</select><select id="f_p" aria-label="الأولوية">${Object.entries(PR).map(([k,[e,n]])=>`<option value="${k}" ${k===v.pr?'selected':''}>${e} ${n}</option>`).join('')}</select><textarea id="f_n" placeholder="ملاحظة (اختياري)">${esc(v.note)}</textarea><label class="chk"><input type="checkbox" id="f_r" ${v.rec?'checked':''}> 🔁 مهمة متكررة (تظهر كل أسبوع)</label><label class="chk"><input type="checkbox" id="f_x" ${v.star?'checked':''}> ⭐ للمراجعة</label><button class="btn block" data-a="saveTask" data-id="${id||''}">حفظ</button>${t?`<div class="r2"><button class="btn ghost" data-a="copyTask" data-id="${id}">نسخ</button><button class="btn danger" data-a="delTask" data-id="${id}">حذف</button></div>`:''}`)}
-function subSheet(id){const b=B(),s=b.subjects.find(x=>x.id===id)||{name:'',days:[...S.settings.days]};
- sheet(`<h2>${id?'تعديل مادة':'مادة جديدة'}</h2><input id="f_n" placeholder="اسم المادة" value="${esc(s.name)}"><p class="mu">أيام المادة</p><div class="chips">${[...S.settings.days].sort((a,c)=>pos(a)-pos(c)).map(d=>`<label class="chip"><input type="checkbox" name="sd" value="${d}" ${s.days.includes(d)?'checked':''}><span>${DN[d]}</span></label>`).join('')}</div><button class="btn block" data-a="saveSub" data-id="${id||''}">حفظ</button>`)}
-const exPrep=e=>`<h2>📚 خطة التحضير</h2>${prog(ready(e))}<small>الاستعداد ${ready(e)}%</small>`+[['ch','الفصول / المادة الداخلة بالامتحان'],['tasks','مهام التحضير']].map(([k,l])=>`<h3>${l}</h3>`+e[k].map((x,i)=>`<div class="task ${x.done?'done':''}"><button class="ck" data-a="exTog" data-k="${k}" data-i="${i}" data-id="${e.id}" aria-label="إنجاز">${x.done?ic('check'):''}</button><div class="tb"><b>${esc(x.t)}</b></div><button class="st" data-a="exDel" data-k="${k}" data-i="${i}" data-id="${e.id}" aria-label="حذف">${ic('trash')}</button></div>`).join('')+`<div class="r2"><input id="a_${k}" placeholder="إضافة"><button class="btn gold" data-a="exAdd" data-k="${k}" data-id="${e.id}">+</button></div>`).join('')+`<div class="r2"><button class="btn ghost" data-a="exPost" data-id="${e.id}">${e.post?'إلغاء التأجيل':'⚪ تأجيل'}</button><button class="btn danger" data-a="delEx" data-id="${e.id}">حذف الامتحان</button></div>`;
+ sheet(`<h2>${t?'تعديل مهمة':'مهمة جديدة'}</h2><input id="f_t" placeholder="اسم المهمة" value="${esc(v.t)}"><select id="f_s" aria-label="المادة">${b.subjects.map(s=>`<option value="${s.id}" ${s.id===v.sid?'selected':''}>${esc(s.name)}</option>`).join('')}</select><select id="f_d" aria-label="اليوم">${dayOpts(v.day)}</select><select id="f_p" aria-label="الأولوية">${Object.entries(PR).map(([k,[e,n]])=>`<option value="${k}" ${k===v.pr?'selected':''}>${e}${n}</option>`).join('')}</select><textarea id="f_n" placeholder="ملاحظة (اختياري)">${esc(v.note)}</textarea><label class="chk"><input type="checkbox" id="f_r" ${v.rec?'checked':''}> 🔁 مهمة متكررة (تظهر كل أسبوع)</label><label class="chk"><input type="checkbox" id="f_x" ${v.star?'checked':''}> ⭐ للمراجعة</label><button class="btn block" data-a="saveTask" data-id="${id||''}">حفظ</button>${t?`<div class="r2"><button class="btn ghost" data-a="copyTask" data-id="${id}">نسخ</button><button class="btn danger" data-a="delTask" data-id="${id}">حذف</button></div>`:''}`)}
+
+function subSheet(id){const b=B(),s=b.subjects.find(x=>x.id===id)||{name:'',days:[...S.settings.days],tg:'',lec:''};
+ sheet(`<h2>${id?'تعديل مادة':'مادة جديدة'}</h2><input id="f_n" placeholder="اسم المادة" value="${esc(s.name)}"><input id="f_tg" placeholder="📢 رابط قناة التليكرام (اختياري)" value="${esc(s.tg||'')}"><input id="f_lec" placeholder="🎥 رابط المحاضرات أو الدرايف (اختياري)" value="${esc(s.lec||'')}"><p class="mu">أيام المادة</p><div class="chips">${[...S.settings.days].sort((a,c)=>pos(a)-pos(c)).map(d=>`<label class="chip"><input type="checkbox" name="sd" value="${d}" ${s.days.includes(d)?'checked':''}><span>${DN[d]}</span></label>`).join('')}</div><button class="btn block" data-a="saveSub" data-id="${id||''}">حفظ</button>`)}
+
+const exPrep=e=>{
+ const subObj=B().subjects.find(s=>s.name===e.sname);
+ const quickLinks=subObj&&(subObj.tg||subObj.lec)?`
+  <div class="card" style="background:var(--surface2);padding:10px;margin:8px 0">
+    <small style="display:block;margin-bottom:6px;font-weight:700">📌 روابط المراجعة السريعة:</small>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${subObj.tg?`<a href="${esc(subObj.tg)}" target="_blank" rel="noopener" class="btn gold sm" style="text-decoration:none">📢 قناة المادة</a>`:''}
+      ${subObj.lec?`<a href="${esc(subObj.lec)}" target="_blank" rel="noopener" class="btn sm" style="text-decoration:none">🎥 المحاضرات / الدرايف</a>`:''}
+    </div>
+  </div>`:'';
+ return `${quickLinks}<h2>📚 خطة التحضير</h2>${prog(ready(e))}<small>الاستعداد ${ready(e)}%</small>`+[['ch','الفصول / المادة الداخلة بالامتحان'],['tasks','مهام التحضير']].map(([k,l])=>`<h3>${l}</h3>`+e[k].map((x,i)=>`<div class="task ${x.done?'done':''}"><button class="ck" data-a="exTog" data-k="${k}" data-i="${i}" data-id="${e.id}" aria-label="إنجاز">${x.done?ic('check'):''}</button><div class="tb"><b>${esc(x.t)}</b></div><button class="st" data-a="exDel" data-k="${k}" data-i="${i}" data-id="${e.id}" aria-label="حذف">${ic('trash')}</button></div>`).join('')+`<div class="r2"><input id="a_${k}" placeholder="إضافة"><button class="btn gold" data-a="exAdd" data-k="${k}" data-id="${e.id}">+</button></div>`).join('')+`<div class="r2"><button class="btn ghost" data-a="exPost" data-id="${e.id}">${e.post?'إلغاء التأجيل':'⚪ تأجيل'}</button><button class="btn danger" data-a="delEx" data-id="${e.id}">حذف الامتحان</button></div>`;
+};
+
 function exSheet(id){const b=B(),e=b.exams.find(x=>x.id===id)||{sname:'',type:'امتحان شهري',date:iso(new Date()),time:'',place:'',note:'',ch:[],tasks:[]};
  sheet(`<h2>${id?'📝 '+esc(e.sname):'امتحان جديد'}</h2><input id="x_s" list="dl" placeholder="المادة" value="${esc(e.sname)}"><datalist id="dl">${b.subjects.map(s=>`<option value="${esc(s.name)}">`).join('')}</datalist><select id="x_t" aria-label="نوع الامتحان">${['امتحان شهري','نصف الكورس','امتحان نهائي','اختبار قصير','امتحان عملي','أخرى'].map(t=>`<option ${t===e.type?'selected':''}>${t}</option>`).join('')}</select><div class="r2"><input type="date" id="x_d" value="${e.date}" aria-label="التاريخ"><input type="time" id="x_m" value="${e.time}" aria-label="الوقت"></div><input id="x_p" placeholder="المكان (اختياري)" value="${esc(e.place)}"><textarea id="x_n" placeholder="ملاحظات">${esc(e.note)}</textarea><button class="btn block" data-a="saveEx" data-id="${id||''}">حفظ</button>${id?exPrep(e):''}`)}
 
@@ -187,8 +240,8 @@ A.move=d=>{const t=tasks().find(x=>x.id===d.id),ds=[...S.settings.days].sort((a,
  if(n===undefined)return toast('لا يوجد يوم دوام لاحق هذا الأسبوع');t.day=n;save();render();toast('تم نقل المهمة إلى '+DN[n]+'.')};
 A.fl=d=>{F.f=d.f;render()};
 A.addSub=()=>subSheet();A.editSub=d=>subSheet(d.id);
-A.saveSub=d=>{const n=val('f_n');if(!n)return toast('اكتب اسم المادة');const b=B(),days=[...document.querySelectorAll('[name=sd]:checked')].map(x=>+x.value);
- if(d.id){const s=b.subjects.find(x=>x.id===d.id);s.name=n;s.days=days;b.week.tasks.forEach(t=>{if(t.sid===s.id)t.sn=n})}else b.subjects.push({id:uid(),name:n,days});save();closeSheet();render();toast('تم حفظ المادة ✓')};
+A.saveSub=d=>{const n=val('f_n');if(!n)return toast('اكتب اسم المادة');const tg=val('f_tg'),lec=val('f_lec');const b=B(),days=[...document.querySelectorAll('[name=sd]:checked')].map(x=>+x.value);
+ if(d.id){const s=b.subjects.find(x=>x.id===d.id);s.name=n;s.days=days;s.tg=tg;s.lec=lec;b.week.tasks.forEach(t=>{if(t.sid===s.id)t.sn=n})}else b.subjects.push({id:uid(),name:n,days,tg,lec});save();closeSheet();render();toast('تم حفظ المادة ✓')};
 A.delSub=d=>{const b=B(),s=b.subjects.find(x=>x.id===d.id),n=b.week.tasks.filter(t=>t.sid===s.id).length;
  ask(`حذف «${esc(s.name)}»؟${n?`\nسيتم حذف ${n} مهام مرتبطة بها في هذا الأسبوع.`:''}\nالأسابيع المحفوظة لا تتأثر.`,'حذف',()=>{b.subjects=b.subjects.filter(x=>x.id!==s.id);b.week.tasks=b.week.tasks.filter(t=>t.sid!==s.id);delete b.week.notes[s.id];save();render();toast('تم حذف المادة.')})};
 A.addEx=()=>exSheet();A.openEx=d=>exSheet(d.id);
