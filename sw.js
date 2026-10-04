@@ -1,4 +1,4 @@
-const C = 'mds-v7', F = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+const C = 'mds-v8', F = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
