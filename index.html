@@ -98,7 +98,14 @@ var uid = function(){ return Math.random().toString(36).slice(2,9) + Date.now().
 
 var iso = function(d){ var x = (d instanceof Date && !isNaN(d)) ? d : new Date(); return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0'); };
 var pd = function(s){ if(!s || typeof s !== 'string') return new Date(); var p = s.split('-').map(Number); return new Date(p[0]||2026, (p[1]||1)-1, p[2]||1); };
-var wk = function(d, ws){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); var w = Number(ws)||0; x.setDate(x.getDate() - (x.getDay() - w + 7) % 7); return iso(x); };
+
+/* بداية الأسبوع دائماً من الأحد (ws:0) */
+var wk = function(d, ws){
+  var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var w = Number(ws) || 0;
+  x.setDate(x.getDate() - (x.getDay() - w + 7) % 7);
+  return iso(x);
+};
 var addD = function(s, n){ var x = pd(s); x.setDate(x.getDate() + (Number(n)||0)); return iso(x); };
 var fd = function(s){ if(!s) return ''; var x = pd(s); return x.getFullYear() + '/' + String(x.getMonth()+1).padStart(2,'0') + '/' + String(x.getDate()).padStart(2,'0'); };
 var rng = function(s){ return fd(s) + ' — ' + fd(addD(s,6)); };
@@ -163,9 +170,10 @@ function renderLinkCards(s){
 function load(){
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) { S = null; }
   if(!S || typeof S !== 'object' || !S.settings || !S.b){
-    S = { v: 1, settings: { dark: null, days: [0,1,2,3], course: 1, year: '', ws: 0, goal: 90, done: false }, b: {} };
+    S = { v: 1, settings: { dark: null, days: [0,1,2,3,4], course: 1, year: '', ws: 0, goal: 90, done: false }, b: {} };
   }
-  if(!Array.isArray(S.settings.days)) S.settings.days = [0,1,2,3];
+  if(!Array.isArray(S.settings.days)) S.settings.days = [0,1,2,3,4];
+  if(S.settings.ws === undefined) S.settings.ws = 0;
 }
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(S)); return true; }
@@ -184,20 +192,37 @@ function B(){
 }
 function archive(b){
   var w = b.week;
-  if(!w || !(w.tasks.length || Object.values(w.notes || {}).some(Boolean))) return false;
-  b.archive.unshift({ id: uid(), start: w.start, subs: b.subjects.map(function(s){ return {id: s.id, name: s.name}; }), tasks: w.tasks, notes: w.notes || {}, total: w.tasks.length, done: w.tasks.filter(function(t){ return t && t.done; }).length, pct: pct(w.tasks) });
+  if(!w) return false;
+  b.archive.unshift({
+    id: uid(),
+    start: w.start,
+    subs: b.subjects.map(function(s){ return {id: s.id, name: s.name}; }),
+    tasks: w.tasks || [],
+    notes: w.notes || {},
+    total: (w.tasks||[]).length,
+    done: (w.tasks||[]).filter(function(t){ return t && t.done; }).length,
+    pct: pct(w.tasks||[])
+  });
   return true;
 }
-function fresh(b, start){
-  b.week = { start: start, tasks: (b.week && Array.isArray(b.week.tasks) ? b.week.tasks : []).filter(function(t){ return t && t.rec; }).map(function(t){ return Object.assign({}, t, {id: uid(), done: false}); }), notes: {} };
-}
+
+/* تحديث أسبوعي ذكي: ينقل تاريخ الأسبوع لليوم الحالي ويحتفظ بالمهام غير المكتملة */
 function rollover(b, now){
   now = now || new Date();
   var cur = wk(now, (S.settings && S.settings.ws) || 0);
-  if(!b.week){ fresh(b, cur); return true; }
-  if(b.week.start !== cur){
-    if(b.week.start < cur){ archive(b); fresh(b, cur); return true; }
-    else { b.week.start = cur; return true; }
+  if(!b.week){
+    b.week = { start: cur, tasks: [], notes: {} };
+    return true;
+  }
+  if(b.week.start < cur){
+    archive(b);
+    var carriedTasks = (b.week.tasks || []).filter(function(t){ return t && (!t.done || t.rec); });
+    b.week = {
+      start: cur,
+      tasks: carriedTasks.map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); }),
+      notes: {}
+    };
+    return true;
   }
   return false;
 }
@@ -255,13 +280,13 @@ function dayBlocks(tasks, ro, startIso){
   tasks = Array.isArray(tasks) ? tasks : [];
   var curIso = iso(new Date());
   var todayIdx = new Date().getDay();
-  var sDays = (S && S.settings && Array.isArray(S.settings.days)) ? S.settings.days : [0,1,2,3];
+  var sDays = (S && S.settings && Array.isArray(S.settings.days)) ? S.settings.days : [0,1,2,3,4];
   var ds = [...new Set([...sDays, todayIdx, ...tasks.map(function(t){ return t ? Number(t.day) : 0; })])].sort(function(a,c){ return pos(a) - pos(c); });
   return ds.map(function(d){
     var dayDate = startIso ? addD(startIso, pos(d)) : null;
     var isToday = (dayDate === curIso) || (d === todayIdx);
     var dtTxt = dayDate ? (' · ' + fd(dayDate)) : '';
-    var todayBadge = isToday ? '<span class="chip on" style="font-size:.7rem;padding:2px 8px;margin-inline-start:4px;background:var(--gold);color:#082C21;font-weight:bold">اليوم</span>' : '';
+    var todayBadge = isToday ? '<span class="chip on" style="font-size:.72rem;padding:2px 8px;margin-inline-start:4px;background:var(--gold);color:#082C21;font-weight:bold">اليوم</span>' : '';
     var T = tasks.filter(function(t){ return t && Number(t.day) === d; });
     var g = {};
     T.forEach(function(t){
@@ -290,11 +315,11 @@ var fl = function(t){
   return { all: 1, done: t.done, todo: !t.done, high: t.pr === 'h', star: t.star, late: !t.done && pos(t.day) < pos(new Date().getDay()) }[F.f];
 };
 var weekList = function(b){ return dayBlocks((b.week && Array.isArray(b.week.tasks) ? b.week.tasks : []).filter(fl), false, b.week ? b.week.start : null); };
-var dayOpts = function(sel){ return [...new Set([...((S.settings && S.settings.days) || [0,1,2,3]), sel])].sort(function(a,c){ return pos(a) - pos(c); }).map(function(d){ return '<option value="' + d + '" ' + (d === sel ? 'selected' : '') + '>' + (DN[d] || '') + '</option>'; }).join(''); };
+var dayOpts = function(sel){ return [...new Set([...((S.settings && S.settings.days) || [0,1,2,3,4]), sel])].sort(function(a,c){ return pos(a) - pos(c); }).map(function(d){ return '<option value="' + d + '" ' + (d === sel ? 'selected' : '') + '>' + (DN[d] || '') + '</option>'; }).join(''); };
 
 function pHome(b){
-  if(!b.week) fresh(b, wk(new Date(), (S.settings && S.settings.ws) || 0));
-  var w = b.week || { start: iso(new Date()), tasks: [], notes: {} };
+  rollover(b);
+  var w = b.week || { start: wk(new Date(), (S.settings && S.settings.ws) || 0), tasks: [], notes: {} };
   var T = Array.isArray(w.tasks) ? w.tasks : [];
   var p = pct(T);
   var td = new Date().getDay();
@@ -305,7 +330,11 @@ function pHome(b){
   var rv = T.filter(function(t){ return t && t.star; });
   var late = T.filter(function(t){ return t && !t.done && pos(t.day) < pos(td); });
   var todayExact = fd(iso(new Date()));
+  var curWeekStart = wk(new Date(), S.settings.ws || 0);
+  
   var al = (ex && examT(ex) - Date.now() < 7 * 864e5 && ready(ex) < 70) ? ('<div class="card warn">⚠️ لديك امتحان ' + esc(ex.sname) + ' ' + (exState(ex) === 'today' ? 'اليوم' : 'بعد ' + cd(ex)) + '، وما زالت بعض مهام التحضير غير مكتملة.</div>') : '';
+
+  var weekSyncBtn = (w.start < curWeekStart) ? '<button class="btn gold block" data-a="syncCurWeek" style="margin-bottom:12px">🔄 تحديث لتواريخ هذا الأسبوع (' + rng(curWeekStart) + ')</button>' : '';
 
   var fullWeekSchedule = '<details class="card" style="margin:12px 0;border-color:var(--active)">'
     + '<summary style="cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center">'
@@ -316,6 +345,7 @@ function pHome(b){
     + '</details>';
 
   return '<div class="card hero"><small>الأسبوع الحالي · ' + rng(w.start) + '</small><h2 style="margin:4px 0 10px;font-size:1.15rem;color:var(--active)">📅 اليوم: ' + DN[td] + ' (' + todayExact + ')</h2><div class="big">' + p + '%</div>' + prog(p) + '<p class="mu">🎯 الهدف: ' + S.settings.goal + '% · الحالي: ' + p + '%</p><div class="st4"><span><b>' + (S.settings.days || []).length + '</b>أيام دوام</span><span><b>' + (b.subjects || []).length + '</b>مواد</span><span><b>' + T.length + '</b>مهمة</span><span><b>' + T.filter(function(t){ return t && t.done; }).length + '</b>مكتملة</span></div></div>'
+    + weekSyncBtn
     + al
     + fullWeekSchedule
     + '<h2>📅 مهام اليوم (' + DN[td] + ')</h2>' + (tt.length ? tt.map(function(t){ return taskRow(t); }).join('') : '<p class="mu card">لا توجد مهام لليوم.</p>')
@@ -328,10 +358,11 @@ function pHome(b){
 }
 
 function pWeek(b){
-  var curStart = b.week ? b.week.start : iso(new Date());
+  rollover(b);
+  var curStart = b.week ? b.week.start : wk(new Date(), S.settings.ws || 0);
   return '<h2>📅 ' + rng(curStart) + '</h2><input id="q" type="search" placeholder="🔍 البحث عن مادة أو مهمة" value="' + esc(F.q) + '"><div class="chips">'
     + [['all','الكل'],['done','المكتمل'],['todo','غير المكتمل'],['high','أولوية عالية'],['star','للمراجعة'],['late','المتأخر']].map(function(item){ return '<button class="chip ' + (F.f === item[0] ? 'on' : '') + '" data-a="fl" data-f="' + item[0] + '"><span>' + item[1] + '</span></button>'; }).join('')
-    + '</div><div id="wl">' + weekList(b) + '</div><button class="btn block" data-a="add">+ إضافة مهمة</button><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع</button>';
+    + '</div><div id="wl">'+ weekList(b) + '</div><button class="btn block" data-a="add">+ إضافة مهمة</button><button class="btn ghost block" data-a="endWeek">إنهاء هذا الأسبوع وبدء أسبوع جديد</button>';
 }
 
 function pSubj(b){
@@ -378,7 +409,7 @@ function pStats(b){
   });
   var e = Object.entries(m);
   var top = [...e].sort(function(a,c){ return c[1].d - a[1].d; })[0];
-  var need = e.filter(function(x){ return x[1].n; }).sort(function(a,c){ return c[1].n - a[1].n; })[0];
+  var need = e.filter(x=>x[1].n).sort(function(a,c){ return c[1].n - a[1].n; })[0];
   var mins = (Array.isArray(b.sessions) ? b.sessions : []).reduce(function(s,x){ return s + (x.m || 0); }, 0);
   var row = function(l,v){ return '<div class="card dh"><span>' + l + '</span><b>' + v + '</b></div>'; };
   return '<h2>📊 إحصائياتي</h2>'
@@ -392,10 +423,10 @@ function pStats(b){
 }
 
 function pSet(){
-  var s = S.settings || { course: 1, year: '', ws: 0, days: [0,1,2,3], goal: 90 };
+  var s = S.settings || { course: 1, year: '', ws: 0, days: [0,1,2,3,4], goal: 90 };
   return '<h2>📚 الكورس الدراسي</h2><div class="card"><div class="chips">' + [1,2].map(function(n){ return '<button class="chip ' + (s.course === n ? 'on' : '') + '" data-a="course" data-n="' + n + '"><span>الكورس ' + (n === 1 ? 'الأول' : 'الثاني') + '</span></button>'; }).join('') + '</div><input id="yr" placeholder="السنة الدراسية (اختياري) مثل 2026 – 2027" value="' + esc(s.year) + '"></div>'
-    + '<h2>⚙️ الإعدادات</h2><div class="card"><button class="btn ghost block" data-a="theme">' + (document.documentElement.dataset.theme === 'dark' ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي') + '</button><p class="mu">بداية الأسبوع</p><select id="ws">' + DN.map(function(n,i){ return '<option value="' + i + '" ' + (s.ws === i ? 'selected' : '') + '>' + n + '</option>'; }).join('') + '</select><p class="mu">أيام الدوام</p><div class="chips">' + DN.map(function(n,i){ return '<label class="chip"><input type="checkbox" name="wd" value="' + i + '" ' + ((s.days || []).includes(i) ? 'checked' : '') + '><span>' + n + '</span></label>'; }).join('') + '</div><p class="mu">🎯 هدف الأسبوع (%)</p><input id="gl" type="number" min="10" max="100" value="' + (s.goal || 90) + '"></div>'
-    + '<a class="btn ghost block" href="#stats">📊 إحصائياتي</a><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع</button>'
+    + '<h2>⚙️ الإعدادات</h2><div class="card"><button class="btn ghost block" data-a="theme">' + (document.documentElement.dataset.theme === 'dark' ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي') + '</button><p class="mu">بداية الأسبوع</p><select id="ws">' + DN.map(function(n,i){ return '<option value="' + i + '" ' + ((s.ws||0)===i ? 'selected' : '') + '>' + n + '</option>'; }).join('') + '</select><p class="mu">أيام الدوام</p><div class="chips">' + DN.map(function(n,i){ return '<label class="chip"><input type="checkbox" name="wd" value="' + i + '" ' + ((s.days || []).includes(i) ? 'checked' : '') + '><span>' + n + '</span></label>'; }).join('') + '</div><p class="mu">🎯 هدف الأسبوع (%)</p><input id="gl" type="number" min="10" max="100" value="' + (s.goal || 90) + '"></div>'
+    + '<a class="btn ghost block" href="#stats">📊 إحصائياتي</a><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع وبدء أسبوع جديد</button>'
     + '<h2>💾 النسخ الاحتياطي</h2><div class="r2"><button class="btn" data-a="exp">💾 تصدير البيانات</button><button class="btn ghost" data-a="imp">📥 استيراد البيانات</button></div><input type="file" id="fi" accept=".json,application/json" hidden>'
     + '<div class="ft"><b>دفتري</b><p>أداة بسيطة لتنظيم دراستك ومتابعة إنجازك.</p>' + credit + '</div>';
 }
@@ -560,7 +591,26 @@ A.exPost = function(d){ var e = ex(d.id); if(!e) return; e.post = !e.post; save(
 A.delEx = function(d){ ask('هل أنت متأكد من حذف هذا الامتحان؟\nلا يمكن التراجع عن هذه العملية.', 'حذف', function(){ var b = B(); b.exams = b.exams.filter(function(x){ return x && x.id !== d.id; }); save(); render(); toast('تم حذف الامتحان.'); }); };
 A.delArch = function(d){ ask('هل أنت متأكد من حذف هذا الأسبوع؟\nلا يمكن التراجع عن هذه العملية.', 'حذف', function(){ var b = B(); b.archive = b.archive.filter(function(x){ return x && x.id !== d.id; }); save(); location.hash = '#arch'; render(); toast('تم حذف الأسبوع.'); }); };
 A.delAll = function(){ ask('هل أنت متأكد من حذف كل الأسابيع المحفوظة؟\nلا يمكن التراجع عن هذه العملية.', 'حذف الكل', function(){ B().archive = []; save(); render(); toast('تم حذف المحفوظات.'); }); };
-A.endWeek = function(){ ask('سيتم حفظ الأسبوع الحالي في المحفوظات وبدء أسبوع جديد.', 'إنهاء الأسبوع', function(){ var b = B(), s = b.week ? b.week.start : iso(new Date()); archive(b); fresh(b, s); save(); render(); toast('تم حفظ الأسبوع في المحفوظات.'); }, false); };
+
+A.syncCurWeek = function(){
+  var b = B();
+  var cur = wk(new Date(), S.settings.ws || 0);
+  archive(b);
+  var carried = (b.week.tasks || []).filter(function(t){ return t && (!t.done || t.rec); });
+  b.week = {
+    start: cur,
+    tasks: carried.map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); }),
+    notes: {}
+  };
+  save(); render(); toast('تم الانتقال لتواريخ الأسبوع الجديد بنجاح ✓');
+};
+
+A.endWeek = function(){
+  ask('سيتم حفظ إنجاز هذا الأسبوع في المحفوظات وترحيل المهام غير المنجزة للأسبوع الجديد.', 'بدء أسبوع جديد', function(){
+    A.syncCurWeek();
+  }, false);
+};
+
 A.course = function(d){ S.settings.course = +d.n; rollover(B()); save(); render(); toast('تم التبديل إلى الكورس ' + (d.n == 1 ? 'الأول' : 'الثاني')); };
 A.theme = function(){ S.settings.dark = document.documentElement.dataset.theme !== 'dark'; save(); applyTheme(); render(); };
 A.exp = function(){ var u = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' })), a = document.createElement('a'); a.href = u; a.download = 'daftari-backup-' + iso(new Date()) + '.json'; document.body.append(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 1500); toast('تم تصدير البيانات ✓'); };
@@ -571,7 +621,7 @@ A.tmGo = function(){ if(TM.iv){ clearInterval(TM.iv); TM.iv = 0; tmTick(); } els
 A.tmReset = function(){ clearInterval(TM.iv); TM.iv = 0; TM.brk = false; TM.left = TM.dur * 60; timerSheet(); };
 
 function onb(){
-  var o = $('#ob'), s = OB = OB || { i: 0, course: 1, year: '', n: 4, days: [0,1,2,3], subs: [] };
+  var o = $('#ob'), s = OB = OB || { i: 0, course: 1, year: '', n: 5, days: [0,1,2,3,4], subs: [] };
   o.hidden = false;
   var ch = function(a, l, on){ return '<button class="chip ' + (on ? 'on' : '') + '" ' + a + '><span>' + l + '</span></button>'; };
   var st = ['<h1>أهلًا بك في دفتري 👋</h1><p>جهّز أسبوعك الدراسي في دقيقة.</p>',
@@ -579,7 +629,7 @@ function onb(){
     '<h2>كم يوم دوام لديك؟</h2><div class="chips">' + [3,4,5,6,7].map(function(n){ return ch('data-a="ob" data-k="n" data-v="' + n + '"', n, s.n === n); }).join('') + '</div>',
     '<h2>اختر أيام الدوام</h2><div class="chips">' + DN.map(function(n,i){ return ch('data-a="ob" data-k="day" data-v="' + i + '"', n, s.days.includes(i)); }).join('') + '</div>',
     '<h2>أضف موادك</h2><div class="r2"><input id="o_s" placeholder="اسم المادة"><button class="btn gold" data-a="ob" data-k="sub">+</button></div><div class="chips">' + s.subs.map(function(n,i){ return ch('data-a="ob" data-k="rm" data-v="' + i + '"', esc(n) + ' ✕', 1); }).join('') + '</div>',
-    '<h1>تم تجهيز دفتري الدراسي بنجاح 🎉</h1>'];
+    '<h1>تم تجهيز دفتري بنجاح 🎉</h1>'];
   var logoSvg = $('header .logo') ? $('header .logo').outerHTML : '';
   o.innerHTML = '<div class="ob">' + logoSvg + st[s.i] + '<div class="r2"><button class="btn ghost" data-a="obSkip">تخطي</button><button class="btn" data-a="obNext">' + (s.i === 5 ? 'ابدأ' : 'التالي') + '</button></div></div>';
 }
@@ -641,7 +691,7 @@ function boot(){
     setInterval(tick, 30000);
     document.addEventListener('visibilitychange', tick);
     if('serviceWorker' in navigator && /^https?:/.test(location.protocol)){
-      navigator.serviceWorker.register('sw.js?v=7').catch(function(){});
+      navigator.serviceWorker.register('sw.js?v=8').catch(function(){});
     }
   } catch(err) {
     if(window.onerror) window.onerror(err.message, '', 0);
@@ -651,4 +701,3 @@ if(typeof document !== 'undefined') boot();
 </script>
 </body>
 </html>
-
