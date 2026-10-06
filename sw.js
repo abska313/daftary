@@ -1,31 +1,24 @@
-const C = 'mds-v11', F = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+const CACHE_NAME = 'daftari-cache';
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(C)
-      .then(c => c.addAll(F))
-      .then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(k => Promise.all(k.filter(x => x !== C).map(x => caches.delete(x))))
-      .then(() => self.clients.claim())
-  );
+  e.waitUntil(self.clients.claim());
 });
 
+// يجلب الملفات المحدثة من الإنترنت أولاً، وفي حال انقطاع النت يعتمد على المخزن
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
     fetch(e.request)
-      .then(r => {
-        if (r.ok && new URL(e.request.url).origin === location.origin) {
-          const cl = r.clone();
-          caches.open(C).then(c => c.put(e.request, cl));
+      .then(response => {
+        if (response.ok && new URL(e.request.url).origin === location.origin) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         }
-        return r;
+        return response;
       })
       .catch(() => caches.match(e.request).then(hit => hit || caches.match('index.html')))
   );
