@@ -25,9 +25,11 @@ window.onerror = function(msg, url, line) {
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 body{font-family:Cairo,Tajawal,"Segoe UI",Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding-bottom:calc(78px + env(safe-area-inset-bottom));position:relative;min-height:100vh}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-header{position:sticky;top:0;z-index:5;background:var(--primary);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px}
+header{position:sticky;top:0;z-index:10;background:var(--primary);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px}
 [data-theme=dark] header{background:var(--primary-dark)}
-header a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px}header .g{margin-inline-start:auto;color:var(--gold-light);padding:8px}
+header a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px}
+header .hdr-actions{margin-inline-start:auto;display:flex;align-items:center;gap:6px}
+header .hdr-btn{color:var(--gold-light);background:none;border:none;padding:6px;cursor:pointer;display:grid;place-items:center;font-size:1.15rem}
 .logo{width:38px;height:38px;flex:none}header b{display:block;font-size:1.05rem;line-height:1.2}header small{opacity:.8;font-size:.75rem}
 main{max-width:640px;margin:0 auto;padding:6px 16px 16px;position:relative;z-index:1}
 h1{font-size:1.5rem;margin:14px 0 4px}h2{font-size:1rem;margin:18px 0 8px}h3{font-size:.9rem;color:var(--active);margin:10px 0 4px}
@@ -57,7 +59,7 @@ textarea{min-height:64px;resize:vertical}input[type=checkbox]{width:auto;min-hei
 .dh{display:flex;justify-content:space-between;align-items:center;gap:8px}
 nav{position:fixed;bottom:0;inset-inline:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:6}
 nav a{flex:1;display:grid;justify-items:center;gap:1px;padding:8px 0 6px;font-size:.7rem;color:var(--text-secondary);text-decoration:none}nav a[aria-current]{color:var(--active);font-weight:700}nav a[aria-current] svg{color:var(--gold)}
-#sh{position:fixed;inset:0;z-index:20}#sh[hidden],#ob[hidden]{display:none}#sh .bk{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+#sh{position:fixed;inset:0;z-index:20}#sh[hidden],#ob[hidden]{display:none}#sh .bk{position:absolute;inset:0;background:rgba(0,0,0,.6)}
 #sh .sb{position:absolute;bottom:0;inset-inline:0;max-width:640px;margin:auto;background:var(--surface);border-radius:22px 22px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
 #sh .sb>*{margin-bottom:6px}.msg{font-size:1.02rem;white-space:pre-line}
 #ob{position:fixed;inset:0;z-index:30;background:var(--primary-dark);color:#fff;display:grid;place-items:center;padding:20px;overflow:auto}.ob{width:100%;max-width:440px}.ob .logo{width:64px;height:64px}.ob p{opacity:.85;margin-bottom:12px}
@@ -68,7 +70,7 @@ nav a{flex:1;display:grid;justify-items:center;gap:1px;padding:8px 0 6px;font-si
 summary{list-style:none;user-select:none}summary::-webkit-details-marker{display:none}
 
 .link-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
-.link-card{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);text-decoration:none;color:inherit;cursor:pointer}
+.link-card{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);text-decoration:none;color:inherit;cursor:pointer;width:100%;text-align:start}
 .link-thumb{width:56px;height:42px;border-radius:10px;flex:none;display:grid;place-items:center;background:#000;color:#fff;overflow:hidden}
 .link-thumb img{width:100%;height:100%;object-fit:cover}
 .link-thumb.yt{background:#CC0000}
@@ -87,6 +89,7 @@ summary{list-style:none;user-select:none}summary::-webkit-details-marker{display
 .tt-preview img{width:100%;height:auto;max-height:160px;object-fit:cover;opacity:0.85}
 .tt-overlay{position:absolute;background:rgba(8,44,33,0.88);color:#fff;padding:6px 14px;border-radius:20px;font-size:0.82rem;font-weight:bold;border:1px solid var(--gold);display:flex;align-items:center;gap:6px}
 
+/* التوهج المتحرك في الخلفية */
 .bg-ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .glow-orb{position:absolute;border-radius:50%;filter:blur(65px);opacity:.12;will-change:transform}
 [data-theme=dark] .glow-orb{opacity:.18}
@@ -98,42 +101,15 @@ summary{list-style:none;user-select:none}summary::-webkit-details-marker{display
 @keyframes floatC{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-40px,40px,0) scale(0.92)}}
 @media (prefers-reduced-motion: reduce){.glow-orb{animation:none}}
 
-/* ===== ملفات المواد ===== */
-.file-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin:6px 0;cursor:grab;transition:all .15s}
-.file-row.dragging{opacity:.35}
-.file-row.drag-over{border-color:var(--gold);background:var(--surface);transform:scale(1.01)}
-.file-row .fh{color:var(--text-muted);cursor:grab;user-select:none;padding:0 4px;font-size:1.1rem}
+/* قائمة الملفات */
+.file-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin:6px 0}
 .file-row .fic{width:32px;height:32px;border-radius:8px;background:var(--btn);color:#fff;display:grid;place-items:center;flex:none;font-size:.85rem;font-weight:700}
 .file-row .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.86rem;cursor:pointer}
-.file-row .fs{font-size:.68rem;color:var(--text-muted)}
-.file-row .fa{background:none;border:0;color:var(--text-muted);padding:4px 6px;cursor:pointer;font-size:.9rem}
-.file-row .fa:hover{color:var(--danger)}
-.file-ord{display:flex;flex-direction:column;gap:0;margin-inline-start:2px}
-.file-ord button{background:none;border:0;color:var(--text-muted);cursor:pointer;font-size:.7rem;line-height:1;padding:2px}
-.drop-zone{border:2px dashed var(--border);border-radius:14px;padding:18px;text-align:center;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-size:.85rem;margin:8px 0}
-.drop-zone.hover{border-color:var(--gold);background:var(--surface2);color:var(--gold)}
-.file-count-pill{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;padding:2px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);color:var(--text-secondary)}
-
-/* ===== يوتيوب داخل الموقع ===== */
+.file-row .fs{font-size:.68rem;color:var(--text-muted);display:block}
+.file-ord{display:flex;flex-direction:column;gap:1px}
+.file-ord button{background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);cursor:pointer;font-size:.7rem;padding:2px 6px}
 .yt-embed{position:relative;width:100%;padding-bottom:56.25%;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--border)}
 .yt-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-
-/* ===== المنبه ===== */
-.alarm-ring{text-align:center;padding:14px 6px}
-.alarm-ring .clock{font-size:3.2rem;margin:8px 0;display:inline-block;animation:ring .6s infinite}
-@keyframes ring{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
-.alarm-math{font-size:1.9rem;font-weight:800;color:var(--gold);margin:16px 0;font-family:'Courier New',monospace;letter-spacing:2px}
-.alarm-time{font-size:.82rem;color:var(--text-secondary)}
-.alarm-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin:6px 0}
-.alarm-item .at{font-size:1.5rem;font-weight:800;color:var(--active);font-family:'Courier New',monospace;min-width:70px;text-align:center}
-.alarm-item .al{flex:1;font-size:.85rem}
-.alarm-item .ad{font-size:.72rem;color:var(--text-muted)}
-.switch{position:relative;width:44px;height:26px;flex:none}
-.switch input{opacity:0;width:0;height:0}
-.switch span{position:absolute;inset:0;background:var(--border);border-radius:999px;cursor:pointer;transition:.2s}
-.switch span::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.switch input:checked + span{background:var(--success)}
-.switch input:checked + span::before{transform:translateX(18px)}
 </style>
 </head>
 <body>
@@ -143,17 +119,24 @@ summary{list-style:none;user-select:none}summary::-webkit-details-marker{display
   <div class="glow-orb orb-3"></div>
 </div>
 
-<header><a href="#home"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#082C21"/><path d="M10 14h11a3 3 0 013 3v17a3 3 0 00-3-3H10zM38 14H27a3 3 0 00-3 3v17a3 3 0 013-3h11z" fill="none" stroke="#D4AF37" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 23l3 3 6-7" fill="none" stroke="#E6C766" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>دفتري</b><small id="sub"></small></span></a><a class="g" href="#set" id="gear" aria-label="الإعدادات"></a></header>
+<header>
+  <a href="#home">
+    <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#082C21"/><path d="M10 14h11a3 3 0 013 3v17a3 3 0 00-3-3H10zM38 14H27a3 3 0 00-3 3v17a3 3 0 013-3h11z" fill="none" stroke="#D4AF37" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 23l3 3 6-7" fill="none" stroke="#E6C766" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span><b>دفتري</b><small id="sub"></small></span>
+  </a>
+  <div class="hdr-actions">
+    <button class="hdr-btn" data-a="openAlarm" title="المنبه الذكي">⏰</button>
+    <a class="hdr-btn" href="#set" id="gear" aria-label="الإعدادات"></a>
+  </div>
+</header>
+
 <main id="app"></main>
 <nav id="nav" aria-label="التنقل"></nav>
 <div id="sh" hidden></div><div id="ob" hidden></div><div id="toasts" aria-live="polite"></div>
 <input type="file" id="tt_fi" accept="image/*" hidden>
-<input type="file" id="sub_fi" multiple hidden>
+<input type="file" id="sub_doc_fi" hidden>
 
 <script>
-/* =========================================================
-   أدوات عامة + توقيت العراق + مخزن IndexedDB للملفات
-   ========================================================= */
 var DN = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 var PR = {h:['🔴','عالية'],m:['🟡','متوسطة'],l:['🟢','منخفضة']};
 var KEY = 'mds_v1', A = {}, S = null, R = 'home', F = {q:'', f:'all'}, OB = null;
@@ -161,14 +144,20 @@ var $ = function(s){ return document.querySelector(s); };
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
 var uid = function(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3); };
 
-/* ===== توقيت العراق (UTC+3 بدون توقيت صيفي) ===== */
+/* توقيت العراق الدقيق (UTC+3) */
 function nowIQ(){
   var d = new Date();
-  var localOff = d.getTimezoneOffset();
-  var iraqOff = -180;
-  var diff = (localOff - iraqOff) * 60000;
-  return new Date(d.getTime() + diff);
+  var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  return new Date(utc + (3 * 3600000));
 }
+function getIraqTimeStr(){
+  try {
+    return nowIQ().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  } catch(e) {
+    return nowIQ().toLocaleTimeString();
+  }
+}
+
 var iso = function(d){ var x = (d instanceof Date && !isNaN(d)) ? d : nowIQ(); return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0'); };
 var pd = function(s){ if(!s || typeof s !== 'string') return nowIQ(); var p = s.split('-').map(Number); return new Date(p[0]||2026, (p[1]||1)-1, p[2]||1); };
 var wk = function(d){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - x.getDay()); return iso(x); };
@@ -177,18 +166,15 @@ var fd = function(s){ if(!s) return ''; var x = pd(s); return x.getFullYear() + 
 var rng = function(s){ return fd(s) + ' — ' + fd(addD(s,6)); };
 var pct = function(T){ return (Array.isArray(T) && T.length) ? Math.round(100 * T.filter(function(t){ return t && t.done; }).length / T.length) : 0; };
 
-var I = {home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',cal:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',book:'M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11',exam:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',box:'M3 7h18v4H3zM5 11v9h14v-9M10 15h4',gear:'M12 9a3 3 0 100 6 3 3 0 000-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',edit:'M4 20h4L19 9l-4-4L4 16z',bell:'M18 8a6 6 0 00-12 0c0 7-3 8-3 8h18s-3-1-3-8M10 21a2 2 0 004 0',file:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6',clip:'M21 12.5l-8.5 8.5a5 5 0 01-7-7l8-8a3.5 3.5 0 015 5l-8 8a2 2 0 01-3-3l7-7'};
+var I = {home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',cal:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',book:'M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11',exam:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',box:'M3 7h18v4H3zM5 11v9h14v-9M10 15h4',gear:'M12 9a3 3 0 100 6 3 3 0 000-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',edit:'M4 20h4L19 9l-4-4L4 16z',clip:'M21 12.5l-8.5 8.5a5 5 0 01-7-7l8-8a3.5 3.5 0 015 5l-8 8a2 2 0 01-3-3l7-7'};
 var ic = function(n){ return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (I[n]||'') + '"/></svg>'; };
 var credit = '<div class="cr"><a href="https://instagram.com/5k50m" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>صنع بواسطة @5k50m</a></div>';
 var prog = function(p){ return '<div class="pb" role="progressbar" aria-valuenow="' + p + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + p + '%"></i></div>'; };
 
-/* ========== IndexedDB للملفات ========== */
-var DB_NAME = 'daftari_v1', DB_STORE = 'files';
-var _dbPromise = null;
+/* IndexedDB لحفظ الملفات بأمان وسرعة */
+var DB_NAME = 'daftari_files_db', DB_STORE = 'sub_docs';
 function idb(){
-  if(_dbPromise) return _dbPromise;
-  _dbPromise = new Promise(function(res, rej){
-    if(!('indexedDB' in window)) return rej('no-idb');
+  return new Promise(function(res, rej){
     var req = indexedDB.open(DB_NAME, 1);
     req.onupgradeneeded = function(e){
       var db = e.target.result;
@@ -200,53 +186,19 @@ function idb(){
     req.onsuccess = function(){ res(req.result); };
     req.onerror = function(){ rej(req.error); };
   });
-  return _dbPromise;
 }
-function idbPut(rec){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).put(rec); tx.oncomplete = res; tx.onerror = function(){ rej(tx.error); }; }); }); }
-function idbGetAll(sid){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readonly'); var req = tx.objectStore(DB_STORE).index('sid').getAll(sid); req.onsuccess = function(){ res(req.result || []); }; req.onerror = function(){ rej(req.error); }; }); }); }
-function idbDel(id){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).delete(id); tx.oncomplete = res; tx.onerror = function(){ rej(tx.error); }; }); }); }
-function idbCount(sid){ return idbGetAll(sid).then(function(a){ return a.length; }); }
+function idbPut(rec){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).put(rec); tx.oncomplete = res; tx.onerror = rej; }); }); }
+function idbGetAll(sid){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readonly'); var req = tx.objectStore(DB_STORE).index('sid').getAll(sid); req.onsuccess = function(){ res(req.result || []); }; req.onerror = rej; }); }); }
+function idbDel(id){ return idb().then(function(db){ return new Promise(function(res, rej){ var tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).delete(id); tx.oncomplete = res; tx.onerror = rej; }); }); }
 
-var FILE_CACHE = {};
-function loadFiles(sid, cb){
-  idbGetAll(sid).then(function(files){
-    files.sort(function(a,c){ return (a.order||0) - (c.order||0); });
-    FILE_CACHE[sid] = files;
-    if(cb) cb(files);
-  }).catch(function(){ FILE_CACHE[sid] = []; if(cb) cb([]); });
-}
-function dataURLtoBlob(dataUrl){
-  var parts = dataUrl.split(','), mime = (parts[0].match(/:(.*?);/)||[])[1] || 'application/octet-stream';
-  var bin = atob(parts[1] || '');
-  var arr = new Uint8Array(bin.length);
-  for(var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], {type: mime});
-}
-function openFileRecord(rec){
-  try {
-    var blob = dataURLtoBlob(rec.data);
-    var url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
-  } catch(e){ toast('تعذر فتح الملف'); }
-}
-function fmtSize(b){
-  if(!b) return '0 B';
-  if(b < 1024) return b + ' B';
-  if(b < 1048576) return (b/1024).toFixed(1) + ' KB';
-  return (b/1048576).toFixed(2) + ' MB';
-}
-
-/* =========================================================
-   تحميل/حفظ الحالة + قاعدة المعطيات (b)
-   ========================================================= */
 function load(){
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) { S = null; }
   if(!S || typeof S !== 'object' || !S.settings || !S.b){
-    S = { v: 1, settings: { dark: null, days: [0,1,2,3,4], course: 1, year: '', goal: 90, done: false }, b: {}, alarms: [] };
+    S = { v: 1, settings: { dark: null, days: [0,1,2,3,4], course: 1, year: '', goal: 90, done: false, alarm: { time: '', active: false } }, b: {} };
   }
   if(!Array.isArray(S.settings.days)) S.settings.days = [0,1,2,3,4];
-  if(!Array.isArray(S.alarms)) S.alarms = [];
+  if(!S.settings.alarm) S.settings.alarm = { time: '', active: false };
+  S.settings.ws = 0;
 }
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(S)); return true; }
@@ -255,14 +207,16 @@ function save(){
 function B(){
   var k = (S.settings.year || '-') + '|' + S.settings.course;
   S.b = S.b || {};
-  if(!S.b[k]) S.b[k] = { subjects: [], exams: [], archive: [], week: null, sessions: [], timetableImg: null };
+  if(!S.b[k]) S.b[k] = { subjects: [], exams: [], archive: [], week: null, nextWeekTasks: [], sessions: [], timetableImg: null };
   var b = S.b[k];
   b.subjects = Array.isArray(b.subjects) ? b.subjects : [];
   b.exams = Array.isArray(b.exams) ? b.exams : [];
   b.archive = Array.isArray(b.archive) ? b.archive : [];
   b.sessions = Array.isArray(b.sessions) ? b.sessions : [];
+  b.nextWeekTasks = Array.isArray(b.nextWeekTasks) ? b.nextWeekTasks : [];
   return b;
 }
+
 function archive(b){
   var w = b.week;
   if(!w) return false;
@@ -279,14 +233,7 @@ function archive(b){
   return true;
 }
 
-/* ========== مهام الأسبوع الحالي (تدعم جدولة أسابيع قادمة) ========== */
-function weekTasks(b){
-  if(!b.week) return [];
-  var cur = b.week.start;
-  return (b.week.tasks || []).filter(function(t){
-    return t && (t.ws || cur) === cur;
-  });
-}
+/* الترحيل الصحيح بدون حذف مهام الأسبوع الجديد */
 function rollover(b){
   var cur = wk(nowIQ());
   if(!b.week){
@@ -295,21 +242,12 @@ function rollover(b){
   }
   if(b.week.start !== cur){
     archive(b);
-    // احتفظ بالمهام المجدولة لأسابيع قادمة + المتكررة غير المنجزة
-    var kept = (b.week.tasks || []).filter(function(t){
-      if(!t) return false;
-      var tws = t.ws || b.week.start;
-      if(tws > cur) return true;
-      if(t.rec && !t.done) return true;
-      return false;
-    });
+    var carried = (b.week.tasks || []).filter(function(t){ return t && (!t.done || t.rec); });
+    var incoming = (b.nextWeekTasks || []).map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); });
+    b.nextWeekTasks = [];
     b.week = {
       start: cur,
-      tasks: kept.map(function(t){
-        var tws = t.ws || b.week.start;
-        if(tws > cur) return t;
-        return Object.assign({}, t, { id: uid(), done: false, ws: cur });
-      }),
+      tasks: [...carried.map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); }), ...incoming],
       notes: {}
     };
     return true;
@@ -318,11 +256,11 @@ function rollover(b){
 }
 
 function nowTask(b){
-  var list = weekTasks(b).filter(function(t){ return !t.done; });
-  if(!list.length) return null;
+  if(!b.week || !Array.isArray(b.week.tasks)) return null;
   var tp = nowIQ().getDay();
   var best = null, bs = -1e9;
-  list.forEach(function(t, i){
+  b.week.tasks.forEach(function(t, i){
+    if(!t || t.done) return;
     var d = Number(t.day) || 0;
     var s = ({h:30, m:20, l:10}[t.pr] || 20) + (d === tp ? 100 : d < tp ? 80 - (tp - d) : 50 - (d - tp) * 5) - i / 100;
     if(s > bs){ bs = s; best = t; }
@@ -330,13 +268,7 @@ function nowTask(b){
   return best;
 }
 
-/* بنية الامتحان بتوقيت العراق */
-var examT = function(e){
-  var dp = (e.date||'').split('-').map(Number);
-  var tp = (e.time || '00:00').split(':').map(Number);
-  // أنشئ لحظة UTC تقابل ذلك التوقيت في العراق (UTC+3)
-  return new Date(Date.UTC(dp[0]||2026, (dp[1]||1)-1, dp[2]||1, tp[0]||0, tp[1]||0) - 3*3600000);
-};
+var examT = function(e){ return new Date(e.date + 'T' + (e.time || '00:00')); };
 var ready = function(e){
   var a = [...(e && Array.isArray(e.ch) ? e.ch : []), ...(e && Array.isArray(e.tasks) ? e.tasks : [])];
   return a.length ? Math.round(100 * a.filter(function(x){ return x && x.done; }).length / a.length) : 0;
@@ -354,56 +286,102 @@ var nextExam = function(b){
 };
 function validate(o){ return !!(o && typeof o === 'object' && o.settings && Array.isArray(o.settings.days) && o.b && typeof o.b === 'object'); }
 
-/* =========================================================
-   مكوّنات مساعدة (toast / sheet / ask)
-   ========================================================= */
 function toast(m){ var t = document.createElement('div'); t.textContent = m; $('#toasts').append(t); setTimeout(function(){ t.remove(); }, 2800); }
-function sheet(h, noBackdropClose){ $('#sh').innerHTML = '<div class="bk" ' + (noBackdropClose ? '' : 'data-a="close"') + '></div><div class="sb" role="dialog" aria-modal="true">' + h + '</div>'; $('#sh').hidden = false; }
-function closeSheet(){
-  if(typeof alarmActive !== 'undefined' && alarmActive) return;
-  $('#sh').hidden = true; $('#sh').innerHTML = '';
-}
+function sheet(h){ $('#sh').innerHTML = '<div class="bk" data-a="close"></div><div class="sb" role="dialog" aria-modal="true">' + h + '</div>'; $('#sh').hidden = false; }
+function closeSheet(){ $('#sh').hidden = true; $('#sh').innerHTML = ''; }
 function ask(msg, ok, fn, danger){
   if(danger === undefined) danger = true;
   sheet('<p class="msg">' + msg + '</p><div class="r2"><button class="btn ghost" data-a="close">إلغاء</button><button class="btn ' + (danger ? 'danger' : '') + '" data-a="yes">' + ok + '</button></div>');
   A.yes = function(){ closeSheet(); fn(); };
 }
 
-/* =========================================================
-   بطاقات روابط المواد (يوتيوب / تليكرام / درايف) + تشغيل داخل الموقع
-   ========================================================= */
+/* المنبه الذكي الصوتي مع فك القفل باللمس */
+var alarmCtx = null, alarmOsc = null, alarmPulse = null, currentMathAns = null;
+function initAudio(){
+  if(!alarmCtx){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) alarmCtx = new AC();
+  }
+  if(alarmCtx && alarmCtx.state === 'suspended') alarmCtx.resume();
+}
+function startAlarmSound(){
+  try {
+    initAudio();
+    stopAlarmSound();
+    if(!alarmCtx) return;
+    alarmOsc = alarmCtx.createOscillator();
+    var gain = alarmCtx.createGain();
+    alarmOsc.type = 'sawtooth';
+    alarmOsc.frequency.setValueAtTime(800, alarmCtx.currentTime);
+    gain.gain.setValueAtTime(0.3, alarmCtx.currentTime);
+    alarmOsc.connect(gain);
+    gain.connect(alarmCtx.destination);
+    alarmOsc.start();
+    var up = true;
+    alarmPulse = setInterval(function(){
+      if(alarmOsc && alarmCtx){
+        alarmOsc.frequency.setValueAtTime(up ? 1100 : 750, alarmCtx.currentTime);
+        up = !up;
+      }
+    }, 400);
+  } catch(e){}
+}
+function stopAlarmSound(){
+  try { if(alarmPulse) clearInterval(alarmPulse); alarmPulse = null; } catch(e){}
+  try { if(alarmOsc){ alarmOsc.stop(); alarmOsc.disconnect(); alarmOsc = null; } } catch(e){}
+}
+function triggerSmartAlarm(){
+  startAlarmSound();
+  var n1 = Math.floor(Math.random() * 40) + 12;
+  var n2 = Math.floor(Math.random() * 40) + 11;
+  currentMathAns = n1 + n2;
+  sheet('<div style="text-align:center;padding:8px">'
+    + '<h1 style="font-size:2.8rem;margin:0">⏰</h1>'
+    + '<b style="color:var(--danger);font-size:1.15rem;display:block;margin:6px 0">حان وقت المذاكرة والاستيقاظ!</b>'
+    + '<p class="mu">لن ينطفئ المنبه حتى تحل هذه المسألة:</p>'
+    + '<div class="card" style="font-size:1.9rem;font-weight:900;letter-spacing:2px;background:var(--surface2)">'
+    + n1 + ' + ' + n2 + ' = ؟'
+    + '</div>'
+    + '<input id="alarm_ans" type="number" inputmode="numeric" placeholder="اكتب الناتج هنا" style="font-size:1.3rem;text-align:center">'
+    + '<button class="btn danger block" data-a="submitAlarmAns">إيقاف المنبه 🔕</button>'
+    + '</div>');
+  setTimeout(function(){ var el = $('#alarm_ans'); if(el) el.focus(); }, 150);
+}
+
+function checkAlarmLoop(){
+  if(!S || !S.settings || !S.settings.alarm || !S.settings.alarm.active) return;
+  var now = nowIQ();
+  var curHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+  if(curHHMM === S.settings.alarm.time && now.getSeconds() === 0){
+    triggerSmartAlarm();
+  }
+}
+
+/* روابط يوتيوب */
 function getYTId(url){
   if(!url || typeof url !== 'string') return null;
   var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
   return (match && match[2].length === 11) ? match[2] : null;
-}
-function getYTListId(url){
-  if(!url || typeof url !== 'string') return null;
-  var m = url.match(/[?&]list=([^#&?]+)/);
-  return m ? m[1] : null;
 }
 function getTgHandle(url){
   if(!url || typeof url !== 'string') return '';
   var m = url.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_+]+)/);
   return m ? ('@' + m[1]) : 'قناة التليكرام';
 }
-
 function renderLinkCards(s){
   if(!s) return '';
   var h = '';
   if(s.yt && typeof s.yt === 'string' && s.yt.trim()){
-    var url = s.yt.trim();
-    var vid = getYTId(url);
-    var lst = getYTListId(url);
+    var vid = getYTId(s.yt.trim());
     var thumb = vid ? '<img src="https://img.youtube.com/vi/' + vid + '/mqdefault.jpg" alt="YouTube Thumbnail">'
       : '<svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73z"/></svg>';
-    h += '<button type="button" class="link-card" data-a="ytOpen" data-url="' + esc(url) + '">'
+    h += '<div class="link-card" data-a="chooseYT" data-url="' + esc(s.yt) + '" data-vid="' + esc(vid || '') + '">'
       + '<div class="link-thumb yt">' + thumb + '</div>'
       + '<div class="link-info">'
       + '<span class="link-badge badge-yt">YouTube 🎥</span>'
       + '<b>' + (vid ? 'شرح المادة / الفيديو' : 'قائمة تشغيل الشرح') + '</b>'
-      + '<small>اضغط للاختيار — داخل الموقع أو يوتيوب ↗</small>'
-      + '</div></button>';
+      + '<small>اضغط للاختيار: داخل الموقع أو باليوتيوب ↗</small>'
+      + '</div></div>';
   }
   if(s.tg && typeof s.tg === 'string' && s.tg.trim()){
     var handle = getTgHandle(s.tg.trim());
@@ -429,16 +407,13 @@ function renderLinkCards(s){
   return h ? ('<div class="link-grid">' + h + '</div>') : '';
 }
 
-/* =========================================================
-   عرض المهام والأيام
-   ========================================================= */
-var taskRow = function(t, ro){
+var taskRow = function(t, ro, isNextWeek){
   if(!t) return '';
   var pr = PR[t.pr] || PR.m;
   return '<div class="task ' + (t.done ? 'done' : '') + '">'
-    + '<button class="ck" ' + (ro ? 'disabled' : 'data-a="tog" data-id="' + esc(t.id) + '"') + ' aria-label="إنجاز">' + (t.done ? ic('check') : '') + '</button>'
-    + '<button class="tb" ' + (ro ? 'disabled' : 'data-a="edit" data-id="' + esc(t.id) + '"') + '><b>' + esc(t.t) + '</b><small>' + esc(t.sn || '') + ' · ' + pr[0] + ' ' + pr[1] + (t.rec ? ' · 🔁' : '') + '</small>' + (t.note ? '<small>📝 ' + esc(t.note) + '</small>' : '') + '</button>'
-    + '<button class="st ' + (t.star ? 'on' : '') + '" ' + (ro ? 'disabled' : 'data-a="star" data-id="' + esc(t.id) + '"') + ' aria-label="للمراجعة">' + ic('star') + '</button>'
+    + '<button class="ck" ' + (ro || isNextWeek ? 'disabled' : 'data-a="tog" data-id="' + esc(t.id) + '"') + ' aria-label="إنجاز">' + (t.done ? ic('check') : '') + '</button>'
+    + '<button class="tb" ' + (ro ? 'disabled' : (isNextWeek ? 'data-a="editNextTask" data-id="' + esc(t.id) + '"' : 'data-a="edit" data-id="' + esc(t.id) + '"')) + '><b>' + esc(t.t) + '</b><small>' + esc(t.sn || '') + ' · ' + pr[0] + ' ' + pr[1] + (t.rec ? ' · 🔁' : '') + (isNextWeek ? ' · 🔮 الأسبوع القادم' : '') + '</small>' + (t.note ? '<small>📝 ' + esc(t.note) + '</small>' : '') + '</button>'
+    + '<button class="st ' + (t.star ? 'on' : '') + '" ' + (ro || isNextWeek ? 'disabled' : 'data-a="star" data-id="' + esc(t.id) + '"') + ' aria-label="للمراجعة">' + ic('star') + '</button>'
     + '</div>';
 };
 
@@ -449,13 +424,13 @@ function dayBlocks(tasks, ro, startIso){
   var todayIdx = nowIQ().getDay();
   var sDays = (S && S.settings && Array.isArray(S.settings.days)) ? S.settings.days : [0,1,2,3,4];
   var ds = [...new Set([...sDays, todayIdx, ...tasks.map(function(t){ return t ? Number(t.day) : 0; })])].sort(function(a,c){ return a - c; });
-
+  
   return ds.map(function(d){
     var dayDate = startIso ? addD(startIso, d) : null;
     var isToday = (dayDate === curIso) || (d === todayIdx);
     var dtTxt = dayDate ? (' · ' + fd(dayDate)) : '';
     var todayBadge = isToday ? '<span class="chip on" style="font-size:.72rem;padding:2px 8px;margin-inline-start:4px;background:var(--gold);color:#082C21;font-weight:bold">اليوم</span>' : '';
-
+    
     var daySubs = (b.subjects || []).filter(function(s){ return (s.days || []).includes(d); });
     var daySubsHtml = '';
     if(daySubs.length > 0){
@@ -476,7 +451,7 @@ function dayBlocks(tasks, ro, startIso){
       g[n].push(t);
     });
     var listHtml = T.length ? Object.keys(g).map(function(n){
-      return '<h3>' + esc(n) + '</h3>' + g[n].map(function(t){ return taskRow(t, ro); }).join('');
+      return '<h3>' + esc(n) + '</h3>' + g[n].map(function(t){ return taskRow(t, ro, false); }).join('');
     }).join('') : '<p class="mu" style="font-size:0.8rem">لا توجد مهام مسجلة لهذا اليوم</p>';
 
     return '<section class="card ' + (isToday ? 'now' : '') + '">'
@@ -496,12 +471,9 @@ var fl = function(t){
   if(q && !((t.t || '') + ' ' + (t.sn || '')).includes(q)) return false;
   return { all: 1, done: t.done, todo: !t.done, high: t.pr === 'h', star: t.star, late: !t.done && (Number(t.day)||0) < nowIQ().getDay() }[F.f];
 };
-var weekList = function(b){ return dayBlocks(weekTasks(b).filter(fl), false, b.week ? b.week.start : null); };
+var weekList = function(b){ return dayBlocks((b.week && Array.isArray(b.week.tasks) ? b.week.tasks : []).filter(fl), false, b.week ? b.week.start : null); };
 var dayOpts = function(sel){ return [...new Set([...((S.settings && S.settings.days) || [0,1,2,3,4]), sel])].sort(function(a,c){ return a - c; }).map(function(d){ return '<option value="' + d + '" ' + (d === sel ? 'selected' : '') + '>' + (DN[d] || '') + '</option>'; }).join(''); };
 
-/* =========================================================
-   بطاقة جدول المحاضرات
-   ========================================================= */
 function renderTimetableCard(b){
   if(b.timetableImg){
     return '<div class="card" style="margin:12px 0;padding:12px;border-color:var(--gold)">'
@@ -521,19 +493,16 @@ function renderTimetableCard(b){
     return '<div class="card tt-box" style="margin:12px 0">'
       + '<div style="font-size:1.8rem;margin-bottom:2px">🗓️</div>'
       + '<b>جدول المحاضرات الأسبوعي</b>'
-      + '<p class="mu" style="font-size:0.8rem;margin:4px 0 10px">ارفع صورة أو لقطة شاشة لجدول دوامك ومحاضراتك لتصل إليها في أي وقت</p>'
+      + '<p class="mu" style="font-size:0.8rem;margin:4px 0 10px">ارفع صورة لجدول المحاضرات لتصل إليه بضغطة زر</p>'
       + '<button class="btn gold sm" data-a="upTT">📷 رفع صورة الجدول</button>'
       + '</div>';
   }
 }
 
-/* =========================================================
-   الصفحات
-   ========================================================= */
 function pHome(b){
   rollover(b);
   var w = b.week || { start: wk(nowIQ()), tasks: [], notes: {} };
-  var T = weekTasks(b);
+  var T = Array.isArray(w.tasks) ? w.tasks : [];
   var p = pct(T);
   var td = nowIQ().getDay();
   var tt = T.filter(function(t){ return t && Number(t.day) === td; });
@@ -543,6 +512,9 @@ function pHome(b){
   var rv = T.filter(function(t){ return t && t.star; });
   var late = T.filter(function(t){ return t && !t.done && (Number(t.day)||0) < td; });
   var todayExact = fd(iso(nowIQ()));
+  var nextWeekStart = addD(w.start, 7);
+  var nextTasks = Array.isArray(b.nextWeekTasks) ? b.nextWeekTasks : [];
+
   var al = (ex && examT(ex) - Date.now() < 7 * 864e5 && ready(ex) < 70) ? ('<div class="card warn">⚠️ لديك امتحان ' + esc(ex.sname) + ' ' + (exState(ex) === 'today' ? 'اليوم' : 'بعد ' + cd(ex)) + '، وما زالت بعض مهام التحضير غير مكتملة.</div>') : '';
 
   var fullWeekSchedule = '<details class="card" style="margin:12px 0;border-color:var(--active)">'
@@ -553,16 +525,33 @@ function pHome(b){
     + '<div style="margin-top:14px">' + dayBlocks(T, false, w.start) + '</div>'
     + '</details>';
 
-  return '<div class="card hero"><small>الأسبوع الحالي · ' + rng(w.start) + '</small><h2 style="margin:4px 0 10px;font-size:1.15rem;color:var(--active)">📅 اليوم: ' + DN[td] + ' (' + todayExact + ')</h2><div class="big">' + p + '%</div>' + prog(p) + '<p class="mu">🎯 الهدف: ' + S.settings.goal + '% · الحالي: ' + p + '%</p><div class="st4"><span><b>' + (S.settings.days || []).length + '</b>أيام دوام</span><span><b>' + (b.subjects || []).length + '</b>مواد</span><span><b>' + T.length + '</b>مهمة</span><span><b>' + T.filter(function(t){ return t && t.done; }).length + '</b>مكتملة</span></div></div>'
+  var nextWeekSection = '<details class="card" style="margin:12px 0;border-color:var(--gold)">'
+    + '<summary style="cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center">'
+    + '<span>🔮 تحضيرات الأسبوع القادم (' + rng(nextWeekStart) + ')</span>'
+    + '<span style="font-size:.78rem;padding:2px 8px;border-radius:10px;background:var(--surface2)">' + nextTasks.length + ' مهام ▼</span>'
+    + '</summary>'
+    + '<div style="margin-top:12px">'
+    + (nextTasks.length ? nextTasks.map(function(t){ return taskRow(t, false, true); }).join('') : '<p class="mu" style="font-size:0.82rem">لا توجد تحضيرات مسجلة للأسبوع القادم بعد.</p>')
+    + '<button class="btn gold block sm" data-a="addNextWeekTask">+ إضافة تحضير للأسبوع القادم</button>'
+    + '</div>'
+    + '</details>';
+
+  return '<div class="card hero"><small>الأسبوع الحالي · ' + rng(w.start) + '</small>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:4px 0 10px">'
+    + '<h2 style="margin:0;font-size:1.15rem;color:var(--active)">📅 اليوم: ' + DN[td] + ' (' + todayExact + ')</h2>'
+    + '<div style="font-size:0.9rem;color:var(--gold);font-weight:800;background:var(--surface2);padding:4px 10px;border-radius:10px" id="live_iq_time">🇮🇶 ' + getIraqTimeStr() + '</div>'
+    + '</div>'
+    + '<div class="big">' + p + '%</div>' + prog(p) + '<p class="mu">🎯 الهدف: ' + S.settings.goal + '% · الحالي: ' + p + '%</p><div class="st4"><span><b>' + (S.settings.days || []).length + '</b>أيام دوام</span><span><b>' + (b.subjects || []).length + '</b>مواد</span><span><b>' + T.length + '</b>مهمة</span><span><b>' + T.filter(function(t){ return t && t.done; }).length + '</b>مكتملة</span></div></div>'
     + renderTimetableCard(b)
     + al
     + fullWeekSchedule
-    + '<h2>📅 مهام اليوم (' + DN[td] + ')</h2>' + (tt.length ? tt.map(function(t){ return taskRow(t); }).join('') : '<p class="mu card">لا توجد مهام لليوم.</p>')
+    + nextWeekSection
+    + '<h2>📅 مهام اليوم (' + DN[td] + ')</h2>' + (tt.length ? tt.map(function(t){ return taskRow(t, false, false); }).join('') : '<p class="mu card">لا توجد مهام لليوم.</p>')
     + '<h2>🎯 ماذا أفعل الآن؟</h2>' + (nt ? ('<div class="card now"><small>ابدأ الآن بـ</small><b>' + esc(nt.t) + ' — ' + esc(nt.sn || '') + '</b><p>' + (PR[nt.pr] || PR.m)[0] + ' أولوية ' + (PR[nt.pr] || PR.m)[1] + '</p><button class="btn gold" data-a="tog" data-id="' + esc(nt.id) + '">إنجاز المهمة</button></div>') : '<p class="mu card">لا توجد مهام معلّقة.</p>')
-    + (late.length ? ('<h2>⚠️ مهام تحتاج انتباه</h2>' + late.map(function(t){ return taskRow(t) + '<button class="btn ghost sm" data-a="move" data-id="' + esc(t.id) + '">نقل إلى اليوم التالي</button>'; }).join('')) : '')
+    + (late.length ? ('<h2>⚠️️ مهام تحتاج انتباه</h2>' + late.map(function(t){ return taskRow(t, false, false) + '<button class="btn ghost sm" data-a="move" data-id="' + esc(t.id) + '">نقل إلى اليوم التالي</button>'; }).join('')) : '')
     + (ex ? ('<h2>📝 الامتحان القادم</h2><button class="card ex" data-a="openEx" data-id="' + esc(ex.id) + '"><b>' + esc(ex.sname) + '</b><span>📅 ' + DN[pd(ex.date).getDay()] + ' · ' + fd(ex.date) + '</span><span>⏳ ' + (exState(ex) === 'today' ? 'الامتحان اليوم' : 'باقي ' + cd(ex)) + '</span><span>الاستعداد ' + ready(ex) + '%</span>' + prog(ready(ex)) + '</button>') : '')
-    + (hi.length ? ('<h2>🔥 مهام مهمة</h2>' + hi.slice(0, 3).map(function(t){ return taskRow(t); }).join('')) : '')
-    + (rv.length ? ('<h2>⭐ للمراجعة</h2>' + rv.slice(0, 5).map(function(t){ return taskRow(t); }).join('')) : '')
+    + (hi.length ? ('<h2>🔥 مهام مهمة</h2>' + hi.slice(0, 3).map(function(t){ return taskRow(t, false, false); }).join('')) : '')
+    + (rv.length ? ('<h2>⭐ للمراجعة</h2>' + rv.slice(0, 5).map(function(t){ return taskRow(t, false, false); }).join('')) : '')
     + '<div class="r2"><button class="btn" data-a="add">+ إضافة مهمة</button><button class="btn ghost" data-a="timer">⏱ جلسة دراسة</button></div>';
 }
 
@@ -578,19 +567,17 @@ function pSubj(b){
   var subs = Array.isArray(b.subjects) ? b.subjects : [];
   return '<h2>📚 المواد</h2>'
     + (subs.length ? subs.map(function(s){
-        return '<div class="card"><div class="dh"><b>' + esc(s.name) + '</b><span style="display:flex;gap:2px"><button class="st" data-a="openFiles" data-id="' + esc(s.id) + '" aria-label="الملفات" title="الملفات">' + ic('clip') + '</button><button class="st" data-a="editSub" data-id="' + esc(s.id) + '" aria-label="تعديل">' + ic('edit') + '</button><button class="st" data-a="delSub" data-id="' + esc(s.id) + '" aria-label="حذف">' + ic('trash') + '</button></span></div><small>' + ((s.days || []).map(function(d){ return DN[d]; }).join(' + ') || '—') + ' <span class="file-count-pill" data-fc="' + esc(s.id) + '">📎 ...</span></small>' + renderLinkCards(s) + '<textarea data-note="' + esc(s.id) + '" placeholder="📝 ملاحظاتي لهذا الأسبوع">' + esc((b.week && b.week.notes) ? b.week.notes[s.id] || '' : '') + '</textarea></div>';
+        return '<div class="card"><div class="dh"><b>' + esc(s.name) + '</b><span style="display:flex;gap:4px">'
+          + '<button class="st" data-a="openSubDocs" data-id="' + esc(s.id) + '" data-name="' + esc(s.name) + '" title="ملازم ومستندات">' + ic('clip') + '</button>'
+          + '<button class="st" data-a="editSub" data-id="' + esc(s.id) + '" aria-label="تعديل">' + ic('edit') + '</button>'
+          + '<button class="st" data-a="delSub" data-id="' + esc(s.id) + '" aria-label="حذف">' + ic('trash') + '</button>'
+          + '</span></div>'
+          + '<small>' + ((s.days || []).map(function(d){ return DN[d]; }).join(' + ') || '—') + '</small>'
+          + renderLinkCards(s)
+          + '<div style="margin:8px 0 6px"><button class="btn ghost sm" data-a="openSubDocs" data-id="' + esc(s.id) + '" data-name="' + esc(s.name) + '">📁 الملازم والمستندات (' + (s.docCount || 0) + ')</button></div>'
+          + '<textarea data-note="' + esc(s.id) + '" placeholder="📝 ملاحظاتي لهذا الأسبوع">' + esc((b.week && b.week.notes) ? b.week.notes[s.id] || '' : '') + '</textarea></div>';
       }).join('') : '<p class="mu card">لا توجد مواد بعد. أضف أول مادة لتبدأ.</p>')
     + '<button class="btn block" data-a="addSub">+ إضافة مادة</button>';
-}
-function refreshFileCounts(){
-  setTimeout(function(){
-    document.querySelectorAll('[data-fc]').forEach(function(el){
-      var sid = el.getAttribute('data-fc');
-      idbCount(sid).then(function(n){
-        el.textContent = '📎 ' + n + ' ملف' + (n === 1 ? '' : 'ات');
-      }).catch(function(){ el.textContent = '📎 0 ملف'; });
-    });
-  }, 50);
 }
 
 function pExams(b){
@@ -616,7 +603,7 @@ function pArch(b, id){
 }
 
 function pStats(b){
-  var T = weekTasks(b);
+  var T = (b.week && Array.isArray(b.week.tasks)) ? b.week.tasks : [];
   var arch = Array.isArray(b.archive) ? b.archive : [];
   var all = [...T, ...arch.flatMap(function(a){ return Array.isArray(a.tasks) ? a.tasks : []; })];
   var m = {};
@@ -641,31 +628,13 @@ function pStats(b){
     + row('أكثر مادة تحتاج اهتمامًا', need ? esc(need[0]) : '—');
 }
 
-function alarmListHtml(){
-  var al = Array.isArray(S.alarms) ? S.alarms : [];
-  if(!al.length) return '<p class="mu" style="font-size:.82rem">لا توجد منبهات. أضف منبهًا ليذكّرك بوقت الدراسة أو المراجعة.</p>';
-  return al.map(function(a){
-    var daysTxt = (Array.isArray(a.days) && a.days.length) ? a.days.map(function(d){ return DN[d]; }).join(' · ') : 'كل يوم';
-    return '<div class="alarm-item">'
-      + '<span class="at">' + esc(a.time) + '</span>'
-      + '<div class="al"><b>' + esc(a.label || 'منبه') + '</b><div class="ad">' + esc(daysTxt) + '</div></div>'
-      + '<label class="switch"><input type="checkbox" data-a="togAlarm" data-id="' + esc(a.id) + '" ' + (a.on ? 'checked' : '') + '><span></span></label>'
-      + '<button class="st" data-a="delAlarm" data-id="' + esc(a.id) + '" aria-label="حذف">' + ic('trash') + '</button>'
-      + '</div>';
-  }).join('');
-}
-
 function pSet(){
-  var s = S.settings || { course: 1, year: '', days: [0,1,2,3,4], goal: 90 };
-  var notifOk = (typeof Notification !== 'undefined') && Notification.permission === 'granted';
+  var s = S.settings || { course: 1, year: '', days: [0,1,2,3,4], goal: 90, alarm: { time: '', active: false } };
   return '<h2>📚 الكورس الدراسي</h2><div class="card"><div class="chips">' + [1,2].map(function(n){ return '<button class="chip ' + (s.course === n ? 'on' : '') + '" data-a="course" data-n="' + n + '"><span>الكورس ' + (n === 1 ? 'الأول' : 'الثاني') + '</span></button>'; }).join('') + '</div><input id="yr" placeholder="السنة الدراسية (اختياري) مثل 2026 – 2027" value="' + esc(s.year) + '"></div>'
-    + '<h2>⏰ المنبهات</h2><div class="card">' + alarmListHtml() + '<button class="btn gold block" data-a="addAlarm" style="margin-top:8px">+ إضافة منبه</button>'
-    + (notifOk ? '<p class="mu" style="margin-top:8px;font-size:.78rem">✅ الإشعارات مفعّلة</p>' : '<button class="btn ghost block" data-a="reqNotif" style="margin-top:8px">🔔 تفعيل الإشعارات</button>')
-    + '</div>'
     + '<h2>⚙️ الإعدادات</h2><div class="card"><button class="btn ghost block" data-a="theme">' + (document.documentElement.dataset.theme === 'dark' ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي') + '</button><p class="mu">أيام الدوام</p><div class="chips">' + DN.map(function(n,i){ return '<label class="chip"><input type="checkbox" name="wd" value="' + i + '" ' + ((s.days || []).includes(i) ? 'checked' : '') + '><span>' + n + '</span></label>'; }).join('') + '</div><p class="mu">🎯 هدف الأسبوع (%)</p><input id="gl" type="number" min="10" max="100" value="' + (s.goal || 90) + '"></div>'
+    + '<h2>⏰ منبه دفتري الذكي</h2><div class="card"><div class="r2"><input type="time" id="set_alarm_time" value="' + esc((s.alarm && s.alarm.time) || '') + '"><button class="btn ' + (s.alarm && s.alarm.active ? 'gold' : 'ghost') + '" data-a="toggleAlarm">' + (s.alarm && s.alarm.active ? 'مفعّل ✓' : 'معطّل') + '</button></div><small class="mu">يصدر صوتاً تحذيرياً ولا ينطفئ إلا بحل مسألة حسابية لضمان استيقاظك.</small></div>'
     + '<a class="btn ghost block" href="#stats">📊 إحصائياتي</a><button class="btn ghost block" data-a="endWeek">إنهاء الأسبوع وبدء أسبوع جديد</button>'
     + '<h2>💾 النسخ الاحتياطي</h2><div class="r2"><button class="btn" data-a="exp">💾 تصدير البيانات</button><button class="btn ghost" data-a="imp">📥 استيراد البيانات</button></div><input type="file" id="fi" accept=".json,application/json" hidden>'
-    + '<p class="mu" style="font-size:.78rem;margin-top:8px">ℹ️ الملفات المرفوعة للمواد محفوظة داخل المتصفح (IndexedDB) وليست ضمن النسخة الاحتياطية.</p>'
     + '<div class="ft"><b>دفتري</b><p>أداة بسيطة لتنظيم دراستك ومتابعة إنجازك.</p>' + credit + '</div>';
 }
 
@@ -684,49 +653,35 @@ function render(){
     }).join('');
     $('#gear').innerHTML = ic('gear');
     $('#sub').textContent = 'الكورس ' + (S.settings.course === 1 ? 'الأول' : 'الثاني') + (S.settings.year ? ' · ' + S.settings.year : '');
-    if(R === 'subj') refreshFileCounts();
   } catch(err) {
-    console.error(err);
     if(window.onerror) window.onerror(err.message, '', 0);
   }
 }
 
-/* =========================================================
-   شيتات الإدخال
-   ========================================================= */
-function weekChoices(b){
-  var cur = b.week ? b.week.start : wk(nowIQ());
-  return [
-    {v: cur, l: '📅 هذا الأسبوع (' + rng(cur) + ')'},
-    {v: addD(cur, 7), l: '📅 الأسبوع القادم (' + rng(addD(cur,7)) + ')'},
-    {v: addD(cur, 14), l: '📅 بعد أسبوعين (' + rng(addD(cur,14)) + ')'}
-  ];
-}
-
-function taskSheet(id){
+function taskSheet(id, isNextWeekInit){
   var b = B();
-  var t = id ? b.week.tasks.find(function(x){ return x && x.id === id; }) : null;
+  var isNW = !!isNextWeekInit;
+  var list = isNW ? (b.nextWeekTasks || []) : (b.week.tasks || []);
+  var t = id ? list.find(function(x){ return x && x.id === id; }) : null;
   if(!b.subjects.length) return toast('أضف مادة أولًا من صفحة المواد');
-  var cur = b.week ? b.week.start : wk(nowIQ());
   var td = nowIQ().getDay();
-  var v = t || { t: '', sid: b.subjects[0].id, day: (S.settings.days || []).includes(td) ? td : (S.settings.days && S.settings.days[0] != null ? S.settings.days[0] : 0), pr: 'm', note: '', star: false, rec: false, ws: cur };
-  var wsVal = v.ws || cur;
-  var wc = weekChoices(b);
-  // ضمان وجود الخيار الحالي ضمن القائمة (لو حُفظ سابقًا)
-  if(!wc.some(function(x){ return x.v === wsVal; })) wc.push({v: wsVal, l: '📅 ' + rng(wsVal)});
-
-  sheet('<h2>' + (t ? 'تعديل مهمة' : 'مهمة جديدة') + '</h2>'
-    + '<input id="f_t" placeholder="اسم المهمة" value="' + esc(v.t) + '">'
+  var v = t || { t: '', sid: b.subjects[0].id, day: (S.settings.days || []).includes(td) ? td : S.settings.days[0] ?? 0, pr: 'm', note: '', star: false, rec: false, isNextWeek: isNW };
+  
+  sheet('<h2>' + (t ? 'تعديل مهمة' : 'مهمة / تحضير جديد') + '</h2>'
+    + '<input id="f_t" placeholder="اسم المهمة أو التحضير" value="' + esc(v.t) + '">'
+    + '<p class="mu">الأسبوع المخصص للتحضير:</p>'
+    + '<select id="f_week_target">'
+    + '<option value="cur" ' + (!v.isNextWeek ? 'selected' : '') + '>الأسبوع الحالي (' + rng(b.week.start) + ')</option>'
+    + '<option value="next" ' + (v.isNextWeek ? 'selected' : '') + '>الأسبوع القادم (' + rng(addD(b.week.start, 7)) + ')</option>'
+    + '</select>'
     + '<select id="f_s" aria-label="المادة">' + b.subjects.map(function(s){ return '<option value="' + esc(s.id) + '" ' + (s.id === v.sid ? 'selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select>'
-    + '<label class="mu" style="margin-top:6px;display:block;font-size:.82rem;font-weight:700">📅 لأي أسبوع؟</label>'
-    + '<select id="f_w" aria-label="الأسبوع">' + wc.map(function(x){ return '<option value="' + esc(x.v) + '" ' + (x.v === wsVal ? 'selected' : '') + '>' + esc(x.l) + '</option>'; }).join('') + '</select>'
     + '<select id="f_d" aria-label="اليوم">' + dayOpts(v.day) + '</select>'
     + '<select id="f_p" aria-label="الأولوية">' + Object.entries(PR).map(function(entry){ return '<option value="' + entry[0] + '" ' + (entry[0] === v.pr ? 'selected' : '') + '>' + entry[1][0] + ' ' + entry[1][1] + '</option>'; }).join('') + '</select>'
     + '<textarea id="f_n" placeholder="ملاحظة (اختياري)">' + esc(v.note) + '</textarea>'
     + '<label class="chk"><input type="checkbox" id="f_r" ' + (v.rec ? 'checked' : '') + '> 🔁 مهمة متكررة (تظهر كل أسبوع)</label>'
     + '<label class="chk"><input type="checkbox" id="f_x" ' + (v.star ? 'checked' : '') + '> ⭐ للمراجعة</label>'
-    + '<button class="btn block" data-a="saveTask" data-id="' + esc(id || '') + '">حفظ</button>'
-    + (t ? ('<div class="r2"><button class="btn ghost" data-a="copyTask" data-id="' + esc(id) + '">نسخ</button><button class="btn danger" data-a="delTask" data-id="' + esc(id) + '">حذف</button></div>') : ''));
+    + '<button class="btn block" data-a="saveTask" data-id="' + esc(id || '') + '" data-wasnext="' + (isNW ? '1' : '0') + '">حفظ</button>'
+    + (t ? ('<div class="r2"><button class="btn ghost" data-a="copyTask" data-id="' + esc(id) + '" data-isnext="' + (isNW ? '1' : '0') + '">نسخ</button><button class="btn danger" data-a="delTask" data-id="' + esc(id) + '" data-isnext="' + (isNW ? '1' : '0') + '">حذف</button></div>') : ''));
 }
 
 function subSheet(id){
@@ -740,120 +695,7 @@ function subSheet(id){
     + '<input id="f_lec" placeholder="📁 رابط درايف / ملازم / ملخصات (اختياري)" value="' + esc(s.lec || '') + '">'
     + '<p class="mu" style="margin-top:10px">أيام دوام المادة</p>'
     + '<div class="chips">' + [...((S.settings && S.settings.days) || [])].sort(function(a,c){ return a - c; }).map(function(d){ return '<label class="chip"><input type="checkbox" name="sd" value="' + d + '" ' + ((s.days || []).includes(d) ? 'checked' : '') + '><span>' + DN[d] + '</span></label>'; }).join('') + '</div>'
-    + '<button class="btn block" data-a="saveSub" data-id="' + esc(id || '') + '">حفظ المادة</button>'
-    + (id ? '<button class="btn ghost block" data-a="openFiles" data-id="' + esc(id) + '">📎 إدارة ملفات المادة</button>' : ''));
-}
-
-/* ===== شيت الملفات ===== */
-var currentFilesSid = null;
-function fileSheet(sid){
-  var b = B();
-  var s = b.subjects.find(function(x){ return x && x.id === sid; });
-  if(!s) return;
-  currentFilesSid = sid;
-  sheet('<h2>📎 ملفات: ' + esc(s.name) + '</h2>'
-    + '<div class="drop-zone" id="dz">📥 اسحب الملفات هنا أو اضغط للاختيار<br><small class="mu">PDF · صور · Word · PPT · أي نوع</small></div>'
-    + '<div id="flist"><p class="mu" style="text-align:center;font-size:.82rem">جاري التحميل…</p></div>'
-    + '<button class="btn ghost block" data-a="close">إغلاق</button>');
-  var dz = $('#dz');
-  if(dz){
-    dz.addEventListener('click', function(){ pickFilesFor(sid); });
-    dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('hover'); });
-    dz.addEventListener('dragleave', function(){ dz.classList.remove('hover'); });
-    dz.addEventListener('drop', function(e){
-      e.preventDefault(); dz.classList.remove('hover');
-      if(e.dataTransfer && e.dataTransfer.files) uploadFiles(sid, e.dataTransfer.files);
-    });
-  }
-  renderFileList(sid);
-}
-function renderFileList(sid){
-  var box = $('#flist');
-  if(!box) return;
-  loadFiles(sid, function(files){
-    if(!$('#flist')) return;
-    if(!files.length){
-      $('#flist').innerHTML = '<p class="mu" style="text-align:center;font-size:.82rem;padding:12px">لا توجد ملفات بعد.</p>';
-      return;
-    }
-    $('#flist').innerHTML = files.map(function(f, i){
-      var ext = (f.name.split('.').pop() || '').toUpperCase().slice(0,4);
-      return '<div class="file-row" draggable="true" data-fid="' + esc(f.id) + '" data-sid="' + esc(sid) + '">'
-        + '<span class="fh" title="اسحب">≡</span>'
-        + '<span class="fic">' + esc(ext) + '</span>'
-        + '<span class="fn" data-a="openFile" data-fid="' + esc(f.id) + '"><b>' + esc(f.name) + '</b><small class="fs">' + fmtSize(f.size) + '</small></span>'
-        + '<div class="file-ord"><button data-a="moveFileUp" data-fid="' + esc(f.id) + '" aria-label="أعلى">▲</button><button data-a="moveFileDown" data-fid="' + esc(f.id) + '" aria-label="أسفل">▼</button></div>'
-        + '<button class="fa" data-a="delFile" data-fid="' + esc(f.id) + '" aria-label="حذف">🗑</button>'
-        + '</div>';
-    }).join('');
-    bindFileDrag(sid);
-  });
-}
-function bindFileDrag(sid){
-  var rows = document.querySelectorAll('#flist .file-row');
-  var dragSrc = null;
-  rows.forEach(function(r){
-    r.addEventListener('dragstart', function(e){ dragSrc = r; r.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-    r.addEventListener('dragend', function(){ r.classList.remove('dragging'); rows.forEach(function(x){ x.classList.remove('drag-over'); }); });
-    r.addEventListener('dragover', function(e){ e.preventDefault(); if(dragSrc && dragSrc !== r){ r.classList.add('drag-over'); } });
-    r.addEventListener('dragleave', function(){ r.classList.remove('drag-over'); });
-    r.addEventListener('drop', function(e){
-      e.preventDefault(); r.classList.remove('drag-over');
-      if(!dragSrc || dragSrc === r) return;
-      var list = Array.from(document.querySelectorAll('#flist .file-row'));
-      var from = list.indexOf(dragSrc), to = list.indexOf(r);
-      if(from < 0 || to < 0) return;
-      var arr = (FILE_CACHE[sid] || []).slice();
-      var moved = arr.splice(from, 1)[0];
-      arr.splice(to, 0, moved);
-      arr.forEach(function(f, i){ f.order = i; idbPut(f); });
-      FILE_CACHE[sid] = arr;
-      renderFileList(sid);
-    });
-  });
-}
-function pickFilesFor(sid){
-  var inp = $('#sub_fi');
-  inp.value = '';
-  inp.onchange = function(){ if(inp.files && inp.files.length) uploadFiles(sid, inp.files); };
-  inp.click();
-}
-function uploadFiles(sid, files){
-  var arr = Array.from(files);
-  if(!arr.length) return;
-  toast('جاري رفع ' + arr.length + ' ملف…');
-  var results = [];
-  var i = 0;
-  function next(){
-    if(i >= arr.length) return done();
-    var f = arr[i++];
-    var r = new FileReader();
-    r.onload = function(){ results.push({name: f.name, type: f.type || 'application/octet-stream', size: f.size, data: r.result}); next(); };
-    r.onerror = function(){ next(); };
-    r.readAsDataURL(f);
-  }
-  function done(){
-    var startOrder = (FILE_CACHE[sid] || []).length;
-    Promise.all(results.map(function(x, idx){
-      return idbPut({ id: uid(), sid: sid, name: x.name, type: x.type, size: x.size, data: x.data, order: startOrder + idx, createdAt: Date.now() });
-    })).then(function(){
-      toast('تم رفع ' + results.length + ' ملف ✓');
-      renderFileList(sid);
-      if(R === 'subj') refreshFileCounts();
-    }).catch(function(err){
-      console.error(err);
-      toast('تعذّر حفظ الملفات — قد تكون المساحة ممتلئة');
-    });
-  }
-  next();
-}
-function findFile(fid){
-  var all = Object.values(FILE_CACHE);
-  for(var i=0;i<all.length;i++){
-    var f = all[i].find(function(x){ return x.id === fid; });
-    if(f) return f;
-  }
-  return null;
+    + '<button class="btn block" data-a="saveSub" data-id="' + esc(id || '') + '">حفظ المادة</button>');
 }
 
 function exPrep(e){
@@ -877,9 +719,6 @@ function exSheet(id){
   sheet('<h2>' + (id ? '📝 ' + esc(e.sname) : 'امتحان جديد') + '</h2><input id="x_s" list="dl" placeholder="المادة" value="' + esc(e.sname) + '"><datalist id="dl">' + b.subjects.map(function(s){ return '<option value="' + esc(s.name) + '">'; }).join('') + '</datalist><select id="x_t" aria-label="نوع الامتحان">' + ['امتحان شهري','نصف الكورس','امتحان نهائي','اختبار قصير','امتحان عملي','أخرى'].map(function(t){ return '<option ' + (t === e.type ? 'selected' : '') + '>' + t + '</option>'; }).join('') + '</select><div class="r2"><input type="date" id="x_d" value="' + esc(e.date) + '" aria-label="التاريخ"><input type="time" id="x_m" value="' + esc(e.time) + '" aria-label="الوقت"></div><input id="x_p" placeholder="المكان (اختياري)" value="' + esc(e.place) + '"><textarea id="x_n" placeholder="ملاحظات">' + esc(e.note) + '</textarea><button class="btn block" data-a="saveEx" data-id="' + esc(id || '') + '">حفظ</button>' + (id ? exPrep(e) : ''));
 }
 
-/* =========================================================
-   المؤقت (Pomodoro)
-   ========================================================= */
 var TM = {dur:25, left:1500, end:0, iv:0, brk:false};
 var mmss = function(s){ return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); };
 function timerSheet(){
@@ -898,124 +737,61 @@ function tmTick(){
   if(!$('#sh').hidden && el) timerSheet();
 }
 
-/* =========================================================
-   المنبه: تشغيل/إيقاف + شاشة + صوت + معادلة رياضية
-   ========================================================= */
-var alarmActive = false;
-var alarmCtx = null, alarmOsc = null, alarmGain = null, alarmPulse = null;
-
-function startAlarmSound(){
-  try {
-    stopAlarmSound();
-    var AC = window.AudioContext || window.webkitAudioContext;
-    if(!AC) return;
-    alarmCtx = new AC();
-    alarmOsc = alarmCtx.createOscillator();
-    alarmGain = alarmCtx.createGain();
-    alarmOsc.type = 'sine';
-    alarmOsc.frequency.value = 880;
-    alarmGain.gain.value = 0.05;
-    alarmOsc.connect(alarmGain).connect(alarmCtx.destination);
-    alarmOsc.start();
-    var up = true;
-    alarmPulse = setInterval(function(){
-      if(!alarmCtx) return;
-      try {
-        alarmGain.gain.linearRampToValueAtTime(up ? 0.35 : 0.05, alarmCtx.currentTime + 0.25);
-        alarmOsc.frequency.setValueAtTime(up ? 880 : 660, alarmCtx.currentTime);
-      } catch(e){}
-      up = !up;
-    }, 350);
-  } catch(e){ console.error(e); }
-}
-function stopAlarmSound(){
-  try { if(alarmPulse) clearInterval(alarmPulse); alarmPulse = null; } catch(e){}
-  try { if(alarmOsc) alarmOsc.stop(); alarmOsc = null; } catch(e){}
-  try { if(alarmCtx) alarmCtx.close(); alarmCtx = null; } catch(e){}
-}
-function alarmSheet(a){
-  var x = Math.floor(Math.random()*8) + 3;
-  var y = Math.floor(Math.random()*8) + 3;
-  var z = Math.floor(Math.random()*20) + 5;
-  var ans = x * y + z;
-  alarmActive = true;
-  sheet('<div class="alarm-ring">'
-    + '<div class="clock">⏰</div>'
-    + '<h2>' + esc(a.label || 'منبه دفتري') + '</h2>'
-    + '<p class="alarm-time">الوقت: ' + esc(a.time) + ' بتوقيت العراق</p>'
-    + '<p style="margin-top:10px">لإيقاف المنبه، حل المعادلة التالية:</p>'
-    + '<div class="alarm-math">' + x + ' × ' + y + ' + ' + z + ' = ?</div>'
-    + '<input id="alarm_ans" type="number" inputmode="numeric" placeholder="الإجابة" autocomplete="off" style="text-align:center;font-size:1.4rem;font-weight:800;letter-spacing:2px">'
-    + '<button class="btn gold block" data-a="alarmSubmit" data-ans="' + ans + '" style="margin-top:10px">تحقق وإيقاف</button>'
-    + '<p class="mu" style="margin-top:8px;font-size:.75rem">اكتب الإجابة الصحيحة لإيقاف المنبه.</p>'
-    + '</div>', true);
-  setTimeout(function(){ var el = $('#alarm_ans'); if(el) el.focus(); }, 100);
-}
-function fireAlarm(a){
-  startAlarmSound();
-  try {
-    if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
-      var n = new Notification('⏰ دفتري', { body: (a.label || 'حان وقت المنبه') + ' — ' + a.time, tag: 'daftari-alarm', requireInteraction: true });
-      n.onclick = function(){ window.focus(); n.close(); };
-    }
-  } catch(e){}
-  alarmSheet(a);
-  window.addEventListener('beforeunload', alarmBeforeUnload);
-}
-function alarmBeforeUnload(e){ if(alarmActive){ e.preventDefault(); e.returnValue = ''; return ''; } }
-
-function checkAlarms(){
-  if(!Array.isArray(S.alarms)) return;
-  if(alarmActive) return;
-  var n = nowIQ();
-  var hh = String(n.getHours()).padStart(2,'0');
-  var mm = String(n.getMinutes()).padStart(2,'0');
-  var cur = hh + ':' + mm;
-  var today = iso(n);
-  for(var i = 0; i < S.alarms.length; i++){
-    var a = S.alarms[i];
-    if(!a || !a.on) continue;
-    if(a.time !== cur) continue;
-    if(a.lastFired === today + 'T' + cur) continue;
-    if(Array.isArray(a.days) && a.days.length && a.days.indexOf(n.getDay()) === -1) continue;
-    a.lastFired = today + 'T' + cur;
-    save();
-    fireAlarm(a);
-    return;
-  }
-}
-
-/* =========================================================
-   الأحداث (A)
-   ========================================================= */
 var tasks = function(){ return (B().week && Array.isArray(B().week.tasks)) ? B().week.tasks : []; };
 var val = function(id){ return $('#' + id) ? $('#' + id).value.trim() : ''; };
-A.close = closeSheet; A.add = function(){ taskSheet(); }; A.edit = function(d){ taskSheet(d.id); };
+A.close = closeSheet; A.add = function(){ taskSheet(); }; A.edit = function(d){ taskSheet(d.id, false); };
+A.addNextWeekTask = function(){ taskSheet(null, true); };
+A.editNextTask = function(d){ taskSheet(d.id, true); };
+
 A.tog = function(d){
   var t = tasks().find(function(x){ return x && x.id === d.id; });
   if(!t) return;
   t.done = !t.done; save(); render();
-  var td = nowIQ().getDay(), T = weekTasks(B()).filter(function(x){ return x && Number(x.day) === td; });
+  var td = nowIQ().getDay(), T = tasks().filter(function(x){ return x && Number(x.day) === td; });
   if(t.done && T.length && T.every(function(x){ return x.done; })) toast('ممتاز! أكملت جميع مهام اليوم 🎉');
 };
 A.star = function(d){ var t = tasks().find(function(x){ return x && x.id === d.id; }); if(t){ t.star = !t.star; save(); render(); } };
+
 A.saveTask = function(d){
   var n = val('f_t');
   if(!n) return toast('اكتب اسم المهمة');
   var b = B(), s = b.subjects.find(function(x){ return x && x.id === $('#f_s').value; });
-  var ws = $('#f_w') ? $('#f_w').value : (b.week ? b.week.start : wk(nowIQ()));
-  var o = { t: n, sid: s ? s.id : '', sn: s ? s.name : '', day: +$('#f_d').value, pr: $('#f_p').value, note: val('f_n'), rec: $('#f_r').checked, star: $('#f_x').checked, ws: ws };
+  var isTargetNext = $('#f_week_target').value === 'next';
+  var o = { t: n, sid: s ? s.id : '', sn: s ? s.name : '', day: +$('#f_d').value, pr: $('#f_p').value, note: val('f_n'), rec: $('#f_r').checked, star: $('#f_x').checked, isNextWeek: isTargetNext };
+  
   if(d.id){
-    var cur = tasks().find(function(x){ return x && x.id === d.id; });
-    if(cur) Object.assign(cur, o);
-  } else {
-    b.week.tasks.push(Object.assign({ id: uid(), done: false }, o));
+    b.week.tasks = b.week.tasks.filter(function(x){ return x && x.id !== d.id; });
+    b.nextWeekTasks = (b.nextWeekTasks || []).filter(function(x){ return x && x.id !== d.id; });
   }
-  save(); closeSheet(); render();
-  toast(o.ws && o.ws !== (b.week && b.week.start) ? 'تم الحفظ للأسبوع ' + rng(o.ws) + ' ✓' : 'تم حفظ المهمة ✓');
+
+  var item = Object.assign({ id: d.id || uid(), done: false }, o);
+  if(isTargetNext){
+    b.nextWeekTasks = b.nextWeekTasks || [];
+    b.nextWeekTasks.push(item);
+  } else {
+    b.week.tasks.push(item);
+  }
+  save(); closeSheet(); render(); toast('تم حفظ المهمة بنجاح ✓');
 };
-A.copyTask = function(d){ var b = B(), t = b.week.tasks.find(function(x){ return x && x.id === d.id; }); if(!t) return; b.week.tasks.push(Object.assign({}, t, { id: uid(), done: false })); save(); closeSheet(); render(); toast('تم نسخ المهمة ✓'); };
-A.delTask = function(d){ var b = B(); b.week.tasks = b.week.tasks.filter(function(x){ return x && x.id !== d.id; }); save(); closeSheet(); render(); toast('تم حذف المهمة.'); };
+
+A.copyTask = function(d){
+  var b = B();
+  var isNW = d.isnext === '1';
+  var list = isNW ? (b.nextWeekTasks || []) : (b.week.tasks || []);
+  var t = list.find(function(x){ return x && x.id === d.id; });
+  if(!t) return;
+  list.push(Object.assign({}, t, { id: uid(), done: false }));
+  save(); closeSheet(); render(); toast('تم نسخ المهمة ✓');
+};
+
+A.delTask = function(d){
+  var b = B();
+  var isNW = d.isnext === '1';
+  if(isNW) b.nextWeekTasks = (b.nextWeekTasks || []).filter(function(x){ return x && x.id !== d.id; });
+  else b.week.tasks = (b.week.tasks || []).filter(function(x){ return x && x.id !== d.id; });
+  save(); closeSheet(); render(); toast('تم حذف المهمة.');
+};
+
 A.move = function(d){
   var t = tasks().find(function(x){ return x && x.id === d.id; });
   if(!t) return;
@@ -1039,7 +815,7 @@ A.saveSub = function(d){
       b.week.tasks.forEach(function(t){ if(t && t.sid === s.id) t.sn = n; });
     }
   } else {
-    b.subjects.push({ id: uid(), name: n, days: days, yt: yt, tg: tg, lec: lec });
+    b.subjects.push({ id: uid(), name: n, days: days, yt: yt, tg: tg, lec: lec, docCount: 0 });
   }
   save(); closeSheet(); render(); toast('تم حفظ المادة ✓');
 };
@@ -1047,7 +823,7 @@ A.delSub = function(d){
   var b = B(), s = b.subjects.find(function(x){ return x && x.id === d.id; });
   if(!s) return;
   var n = b.week.tasks.filter(function(t){ return t && t.sid === s.id; }).length;
-  ask('حذف «' + esc(s.name) + '»؟' + (n ? ('\nسيتم حذف ' + n + ' مهام مرتبطة بها.') : '') + '\nملفات المادة المحفوظة ستبقى في المتصفح.', 'حذف', function(){
+  ask('حذف «' + esc(s.name) + '»؟' + (n ? ('\nسيتم حذف ' + n + ' مهام مرتبطة بها.') : '') + '\nالأسابيع المحفوظة لا تتأثر.', 'حذف', function(){
     b.subjects = b.subjects.filter(function(x){ return x && x.id !== s.id; });
     b.week.tasks = b.week.tasks.filter(function(t){ return t && t.sid !== s.id; });
     if(b.week.notes) delete b.week.notes[s.id];
@@ -1055,47 +831,170 @@ A.delSub = function(d){
   });
 };
 
-/* ملفات المادة */
-A.openFiles = function(d){
-  // لو الكيبورد مفتوح داخل شيت آخر (subSheet) نغلق ونفتح
-  fileSheet(d.id);
+/* أوامر المنبه الذكي */
+A.openAlarm = function(){
+  var s = S.settings;
+  sheet('<h2>⏰ منبه دفتري الذكي</h2>'
+    + '<p class="mu">يصدر صوتاً مستمراً ولا يتوقف إلا بعد حل مسألة حسابية لضمان استيقاظك.</p>'
+    + '<div class="card">'
+    + '<input type="time" id="sh_alarm_time" value="' + esc((s.alarm && s.alarm.time) || '') + '">'
+    + '<div class="r2" style="margin-top:10px">'
+    + '<button class="btn ' + (s.alarm && s.alarm.active ? 'danger' : 'gold') + '" data-a="toggleAlarmSave">' + (s.alarm && s.alarm.active ? 'إلغاء تفعيل المنبه' : 'تفعيل المنبه ✓') + '</button>'
+    + '<button class="btn ghost" data-a="testAlarm">تجربة الرنين 🔔</button>'
+    + '</div>'
+    + '</div>');
 };
-A.delFile = function(d){
-  var f = findFile(d.fid);
-  ask('حذف الملف «' + esc(f ? f.name : '') + '»؟', 'حذف', function(){
-    idbDel(d.fid).then(function(){
-      toast('تم حذف الملف.');
-      if(currentFilesSid) renderFileList(currentFilesSid);
-      if(R === 'subj') refreshFileCounts();
-    });
-  });
+A.toggleAlarmSave = function(){
+  initAudio();
+  var tm = $('#sh_alarm_time').value;
+  if(!tm) return toast('حدد وقت المنبه أولاً');
+  S.settings.alarm = S.settings.alarm || {};
+  S.settings.alarm.time = tm;
+  S.settings.alarm.active = !S.settings.alarm.active;
+  save(); closeSheet(); render();
+  toast(S.settings.alarm.active ? ('تم تفعيل المنبه على الساعة ' + tm + ' ⏰') : 'تم إلغاء تفعيل المنبه.');
 };
-A.openFile = function(d){
-  var f = findFile(d.fid);
-  if(f) openFileRecord(f);
+A.toggleAlarm = function(){
+  initAudio();
+  var tm = $('#set_alarm_time').value;
+  if(!tm) return toast('حدد وقت المنبه أولاً');
+  S.settings.alarm = S.settings.alarm || {};
+  S.settings.alarm.time = tm;
+  S.settings.alarm.active = !S.settings.alarm.active;
+  save(); render();
+  toast(S.settings.alarm.active ? ('تم تفعيل المنبه على الساعة ' + tm + ' ⏰') : 'تم إلغاء تفعيل المنبه.');
 };
-A.moveFileUp = function(d){
-  var sid = currentFilesSid; if(!sid) return;
-  var arr = (FILE_CACHE[sid] || []).slice();
-  var i = arr.findIndex(function(x){ return x.id === d.fid; });
-  if(i <= 0) return;
-  var tmp = arr[i-1]; arr[i-1] = arr[i]; arr[i] = tmp;
-  arr.forEach(function(f, idx){ f.order = idx; idbPut(f); });
-  FILE_CACHE[sid] = arr;
-  renderFileList(sid);
-};
-A.moveFileDown = function(d){
-  var sid = currentFilesSid; if(!sid) return;
-  var arr = (FILE_CACHE[sid] || []).slice();
-  var i = arr.findIndex(function(x){ return x.id === d.fid; });
-  if(i < 0 || i >= arr.length - 1) return;
-  var tmp = arr[i+1]; arr[i+1] = arr[i]; arr[i] = tmp;
-  arr.forEach(function(f, idx){ f.order = idx; idbPut(f); });
-  FILE_CACHE[sid] = arr;
-  renderFileList(sid);
+A.testAlarm = function(){ initAudio(); closeSheet(); triggerSmartAlarm(); };
+A.submitAlarmAns = function(){
+  var userAns = Number($('#alarm_ans').value);
+  if(userAns === currentMathAns){
+    stopAlarmSound();
+    closeSheet();
+    toast('أحسنت! إجابة صحيحة، تم إيقاف المنبه 🎉');
+  } else {
+    toast('إجابة خاطئة! ركّز واستيقظ جيداً 🧠');
+    $('#alarm_ans').value = '';
+    $('#alarm_ans').focus();
+  }
 };
 
-/* امتحانات */
+/* خيارات تشغيل يوتيوب */
+A.chooseYT = function(d){
+  sheet('<h2>📺 مشاهدة شرح المادة</h2>'
+    + '<p class="mu">اختر طريقة العرض المفضلة لديك:</p>'
+    + '<div style="display:grid;gap:10px;margin:14px 0">'
+    + (d.vid ? ('<button class="btn gold block" data-a="playInAppYT" data-vid="' + esc(d.vid) + '">🎬 المشاهدة داخل دفتري (بدون تشتيت)</button>') : '')
+    + '<a href="' + esc(d.url) + '" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">🌐 فتح في تطبيق YouTube الرسمي (لتسجيل المشاهدة بحسابك) ↗</a>'
+    + '</div>');
+};
+A.playInAppYT = function(d){
+  sheet('<div style="text-align:center">'
+    + '<div class="dh" style="margin-bottom:8px"><b>🎬 مشغل الفيديو - دفتري</b><button class="btn ghost sm" data-a="close">✕ إغلاق</button></div>'
+    + '<div class="yt-embed">'
+    + '<iframe src="https://www.youtube.com/embed/' + esc(d.vid) + '?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+    + '</div>'
+    + '<a href="https://youtu.be/' + esc(d.vid) + '" target="_blank" class="btn ghost sm block" style="margin-top:10px;text-decoration:none">فتح الفيديو على تطبيق يوتيوب ↗</a>'
+    + '</div>');
+};
+
+/* إدارة ملفات وملازم المادة عبر IndexedDB */
+var curSubDocsId = null;
+A.openSubDocs = async function(d){
+  curSubDocsId = d.id;
+  var docs = await idbGetAll(d.id);
+  var listHtml = docs.length ? docs.map(function(doc, idx){
+    return '<div class="file-row">'
+      + '<span class="fic">📄</span>'
+      + '<span class="fn" data-a="dlDoc" data-docid="' + esc(doc.id) + '">' + esc(doc.name) + '<small class="fs">' + Math.round(doc.size/1024) + ' KB</small></span>'
+      + '<div class="file-ord">'
+      + '<button data-a="moveDocUp" data-docid="' + esc(doc.id) + '" data-idx="' + idx + '">▲</button>'
+      + '<button data-a="moveDocDown" data-docid="' + esc(doc.id) + '" data-idx="' + idx + '">▼</button>'
+      + '</div>'
+      + '<button class="st" data-a="delDoc" data-docid="' + esc(doc.id) + '">' + ic('trash') + '</button>'
+      + '</div>';
+  }).join('') : '<p class="mu card">لا توجد ملفات مرفوعة لهذه المادة حتى الآن.</p>';
+
+  sheet('<h2>📁 ملازم ومستندات: ' + esc(d.name) + '</h2>'
+    + '<p class="mu">ارفع ملازم PDF أو صوراً أو ملخصات للمادة بدون إنترنت.</p>'
+    + '<div style="max-height:50vh;overflow:auto;margin:10px 0">' + listHtml + '</div>'
+    + '<button class="btn gold block" data-a="upDocTrigger">+ رفع ملف / ملزمة جديدة</button>');
+};
+A.upDocTrigger = function(){ $('#sub_doc_fi').click(); };
+A.delDoc = async function(d){
+  ask('هل أنت متأكد من حذف هذا الملف؟', 'حذف', async function(){
+    await idbDel(d.docid);
+    var sub = B().subjects.find(function(s){ return s.id === curSubDocsId; });
+    if(sub){
+      var docs = await idbGetAll(curSubDocsId);
+      sub.docCount = docs.length;
+      save();
+    }
+    closeSheet();
+    render();
+    toast('تم حذف الملف.');
+  });
+};
+A.dlDoc = async function(d){
+  var db = await idb();
+  var tx = db.transaction(DB_STORE, 'readonly');
+  var req = tx.objectStore(DB_STORE).get(d.docid);
+  req.onsuccess = function(){
+    var doc = req.result;
+    if(!doc) return toast('الملف غير موجود');
+    var blob = doc.blob || doc.data;
+    if(typeof blob === 'string') blob = new Blob([blob], {type: doc.type});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = doc.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
+  };
+};
+
+A.moveDocUp = async function(d){
+  var docs = await idbGetAll(curSubDocsId);
+  var idx = +d.idx;
+  if(idx <= 0) return;
+  var tmp = docs[idx]; docs[idx] = docs[idx-1]; docs[idx-1] = tmp;
+  for(var i=0; i<docs.length; i++){ await idbPut(docs[i]); }
+  A.openSubDocs({ id: curSubDocsId, name: '' });
+};
+A.moveDocDown = async function(d){
+  var docs = await idbGetAll(curSubDocsId);
+  var idx = +d.idx;
+  if(idx >= docs.length - 1) return;
+  var tmp = docs[idx]; docs[idx] = docs[idx+1]; docs[idx+1] = tmp;
+  for(var i=0; i<docs.length; i++){ await idbPut(docs[i]); }
+  A.openSubDocs({ id: curSubDocsId, name: '' });
+};
+
+/* جدول المحاضرات */
+A.upTT = function(){ $('#tt_fi').click(); };
+A.viewTT = function(){
+  var b = B();
+  if(!b.timetableImg) return;
+  sheet('<div style="text-align:center">'
+    + '<div class="dh" style="margin-bottom:12px"><b>🗓 جدول المحاضرات الأسبوعي</b><button class="btn ghost sm" data-a="close">✕ إغلاق</button></div>'
+    + '<div style="overflow:auto;max-height:75vh;border-radius:14px;border:1px solid var(--border);background:#000;padding:4px">'
+    + '<img src="' + b.timetableImg + '" style="width:100%;min-width:550px;height:auto;display:block;margin:auto" alt="جدول المحاضرات">'
+    + '</div>'
+    + '<p class="mu" style="margin:8px 0;font-size:0.8rem">💡 يمكنك التمرير أفقياً وعمودياً لرؤية القاعات والمواد بوضوح.</p>'
+    + '<div class="r2">'
+    + '<button class="btn ghost" data-a="upTT">📷 تغيير الصورة</button>'
+    + '<button class="btn danger" data-a="delTT">🗑 حذف الجدول</button>'
+    + '</div>'
+    + '</div>');
+};
+A.delTT = function(){
+  ask('هل تريد حذف صورة جدول المحاضرات؟', 'حذف', function(){
+    B().timetableImg = null;
+    save(); closeSheet(); render(); toast('تم حذف صورة الجدول.');
+  });
+};
+
 A.addEx = function(){ exSheet(); }; A.openEx = function(d){ exSheet(d.id); };
 A.saveEx = function(d){
   var s = val('x_s'), dt = $('#x_d').value;
@@ -1115,140 +1014,23 @@ A.delEx = function(d){ ask('هل أنت متأكد من حذف هذا الامت
 A.delArch = function(d){ ask('هل أنت متأكد من حذف هذا الأسبوع؟\nلا يمكن التراجع عن هذه العملية.', 'حذف', function(){ var b = B(); b.archive = b.archive.filter(function(x){ return x && x.id !== d.id; }); save(); location.hash = '#arch'; render(); toast('تم حذف الأسبوع.'); }); };
 A.delAll = function(){ ask('هل أنت متأكد من حذف كل الأسابيع المحفوظة؟\nلا يمكن التراجع عن هذه العملية.', 'حذف الكل', function(){ B().archive = []; save(); render(); toast('تم حذف المحفوظات.'); }); };
 
-/* نهاية الأسبوع */
 A.endWeek = function(){
-  ask('سيتم حفظ إنجاز هذا الأسبوع في المحفوظات وبدء أسبوع جديد.\nالمهام المجدولة لأسابيع قادمة ستبقى في مكانها.', 'بدء أسبوع جديد', function(){
+  ask('سيتم حفظ إنجاز هذا الأسبوع في المحفوظات وبدء أسبوع جديد.', 'بدء أسبوع جديد', function(){
     var b = B();
     archive(b);
     var cur = wk(nowIQ());
-    var kept = (b.week.tasks || []).filter(function(t){
-      if(!t) return false;
-      var tws = t.ws || b.week.start;
-      if(tws > cur) return true;
-      if(t.rec && !t.done) return true;
-      return false;
-    });
+    var carried = (b.week.tasks || []).filter(function(t){ return t && (!t.done || t.rec); });
+    var incoming = (b.nextWeekTasks || []).map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); });
+    b.nextWeekTasks = [];
     b.week = {
       start: cur,
-      tasks: kept.map(function(t){
-        var tws = t.ws || b.week.start;
-        if(tws > cur) return t;
-        return Object.assign({}, t, { id: uid(), done: false, ws: cur });
-      }),
+      tasks: [...carried.map(function(t){ return Object.assign({}, t, { id: uid(), done: false }); }), ...incoming],
       notes: {}
     };
     save(); render(); toast('تم بدء الأسبوع الجديد بنجاح ✓');
   }, false);
 };
 
-/* جدول المحاضرات */
-A.upTT = function(){ $('#tt_fi').click(); };
-A.viewTT = function(){
-  var b = B();
-  if(!b.timetableImg) return;
-  sheet('<div style="text-align:center">'
-    + '<div class="dh" style="margin-bottom:12px"><b>🗓️️ جدول المحاضرات الأسبوعي</b><button class="btn ghost sm" data-a="close">✕ إغلاق</button></div>'
-    + '<div style="overflow:auto;max-height:75vh;border-radius:14px;border:1px solid var(--border);background:#000;padding:4px">'
-    + '<img src="' + b.timetableImg + '" style="width:100%;min-width:550px;height:auto;display:block;margin:auto" alt="جدول المحاضرات">'
-    + '</div>'
-    + '<p class="mu" style="margin:8px 0;font-size:0.8rem">💡 يمكنك التمرير أفقياً وعمودياً لرؤية القاعات والمواد بوضوح.</p>'
-    + '<div class="r2">'
-    + '<button class="btn ghost" data-a="upTT">📷 تغيير الصورة</button>'
-    + '<button class="btn danger" data-a="delTT">🗑 حذف الجدول</button>'
-    + '</div>'
-    + '</div>');
-};
-A.delTT = function(){
-  ask('هل تريد حذف صورة جدول المحاضرات؟', 'حذف', function(){
-    B().timetableImg = null;
-    save(); closeSheet(); render(); toast('تم حذف صورة الجدول.');
-  });
-};
-
-/* يوتيوب */
-A.ytOpen = function(d){
-  var url = d.url;
-  var vid = getYTId(url);
-  var lst = getYTListId(url);
-  var embedUrl = vid ? ('https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0')
-                     : (lst ? ('https://www.youtube.com/embed/videoseries?list=' + lst + '&autoplay=1') : null);
-  var body = '<h2>🎬 تشغيل يوتيوب</h2>'
-    + '<p class="mu">اختر طريقة المشاهدة:</p>'
-    + '<div class="r2">'
-    + '<a class="btn gold" href="' + esc(url) + '" target="_blank" rel="noopener">🎥 فتح في يوتيوب</a>'
-    + (embedUrl ? '<button class="btn" data-a="ytEmbed" data-embed="' + esc(embedUrl) + '">▶️ مشاهدة هنا</button>' : '<button class="btn" disabled>غير مدعوم</button>')
-    + '</div>'
-    + '<p class="mu" style="font-size:.75rem;margin-top:10px">💡 الفتح في يوتيوب يسجّل المشاهدة في حسابك وسجل المشاهدة.</p>'
-    + '<button class="btn ghost block" data-a="close">إلغاء</button>';
-  sheet(body);
-};
-A.ytEmbed = function(d){
-  sheet('<div class="dh" style="margin-bottom:10px"><b>🎬 المشاهدة داخل الموقع</b><button class="btn ghost sm" data-a="close">✕ إغلاق</button></div>'
-    + '<div class="yt-embed"><iframe src="' + esc(d.embed) + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>'
-    + '<p class="mu" style="font-size:.75rem;margin-top:8px">ℹ️ لتخزين المشاهدة في سجلك، افتح الرابط من يوتيوب مباشرة.</p>');
-};
-
-/* المنبهات */
-A.addAlarm = function(){
-  var hh = nowIQ();
-  var def = String(hh.getHours()).padStart(2,'0') + ':' + String((hh.getMinutes()+5)%60).padStart(2,'0');
-  sheet('<h2>⏰ منبه جديد</h2>'
-    + '<label class="mu" style="font-size:.82rem">الوقت (بتوقيت العراق)</label>'
-    + '<input id="al_t" type="time" value="' + def + '">'
-    + '<label class="mu" style="font-size:.82rem;margin-top:8px;display:block">الوصف</label>'
-    + '<input id="al_l" placeholder="مثال: مراجعة الرياضيات">'
-    + '<p class="mu" style="margin-top:10px;font-weight:700">أيام التكرار (اتركها فارغة لكل يوم)</p>'
-    + '<div class="chips">' + DN.map(function(n,i){ return '<label class="chip"><input type="checkbox" name="ald" value="' + i + '"><span>' + n + '</span></label>'; }).join('') + '</div>'
-    + '<button class="btn block" data-a="saveAlarm">حفظ المنبه</button>'
-    + '<p class="mu" style="font-size:.75rem;margin-top:6px">ℹ️ سيرن المنبه داخل التطبيق مع صوت وإشعار. لإيقافه عليك حل معادلة رياضية بسيطة.</p>'
-  );
-};
-A.saveAlarm = function(){
-  var t = val('al_t');
-  if(!t) return toast('اختر وقت المنبه');
-  var l = val('al_l');
-  var days = [...document.querySelectorAll('[name=ald]:checked')].map(function(x){ return +x.value; });
-  S.alarms.push({ id: uid(), time: t, label: l, days: days, on: true, lastFired: null });
-  save(); closeSheet(); render();
-  toast('تم إضافة المنبه ✓');
-  if(typeof Notification !== 'undefined' && Notification.permission === 'default'){
-    Notification.requestPermission().catch(function(){});
-  }
-};
-A.delAlarm = function(d){
-  ask('حذف هذا المنبه؟', 'حذف', function(){
-    S.alarms = S.alarms.filter(function(x){ return x && x.id !== d.id; });
-    save(); render(); toast('تم حذف المنبه.');
-  });
-};
-A.togAlarm = function(d, el){
-  var a = S.alarms.find(function(x){ return x && x.id === d.id; });
-  if(!a) return;
-  a.on = !a.on; save(); render();
-};
-A.reqNotif = function(){
-  if(typeof Notification === 'undefined') return toast('الإشعارات غير مدعومة على هذا الجهاز');
-  Notification.requestPermission().then(function(p){
-    if(p === 'granted'){ toast('تم تفعيل الإشعارات ✓'); render(); }
-    else toast('لم يتم منح الإذن');
-  });
-};
-A.alarmSubmit = function(d){
-  var v = parseInt(val('alarm_ans'), 10);
-  if(v === +d.ans){
-    stopAlarmSound();
-    alarmActive = false;
-    closeSheet();
-    window.removeEventListener('beforeunload', alarmBeforeUnload);
-    toast('تم إيقاف المنبه ✓');
-  } else {
-    toast('إجابة خاطئة، حاول مرة أخرى');
-    var inp = $('#alarm_ans');
-    if(inp){ inp.value = ''; inp.focus(); }
-  }
-};
-
-/* الإعدادات */
 A.course = function(d){ S.settings.course = +d.n; rollover(B()); save(); render(); toast('تم التبديل إلى الكورس ' + (d.n == 1 ? 'الأول' : 'الثاني')); };
 A.theme = function(){ S.settings.dark = document.documentElement.dataset.theme !== 'dark'; save(); applyTheme(); render(); };
 A.exp = function(){ var u = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' })), a = document.createElement('a'); a.href = u; a.download = 'daftari-backup-' + iso(nowIQ()) + '.json'; document.body.append(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 1500); toast('تم تصدير البيانات ✓'); };
@@ -1258,9 +1040,6 @@ A.tmSet = function(d){ if(TM.iv) return toast('أوقف المؤقت أولًا'
 A.tmGo = function(){ if(TM.iv){ clearInterval(TM.iv); TM.iv = 0; tmTick(); } else { TM.end = Date.now() + TM.left * 1000; TM.iv = setInterval(tmTick, 500); } timerSheet(); };
 A.tmReset = function(){ clearInterval(TM.iv); TM.iv = 0; TM.brk = false; TM.left = TM.dur * 60; timerSheet(); };
 
-/* =========================================================
-   Onboarding
-   ========================================================= */
 function onb(){
   var o = $('#ob'), s = OB = OB || { i: 0, course: 1, year: '', n: 5, days: [0,1,2,3,4], subs: [] };
   o.hidden = false;
@@ -1288,15 +1067,12 @@ function obDone(){
   if(s.days.length) S.settings.days = s.days;
   S.settings.done = true;
   var b = B();
-  s.subs.forEach(function(n){ b.subjects.push({ id: uid(), name: n, days: [...((S.settings && S.settings.days) || [])], yt: '', tg: '', lec: '' }); });
+  s.subs.forEach(function(n){ b.subjects.push({ id: uid(), name: n, days: [...((S.settings && S.settings.days) || [])], yt: '', tg: '', lec: '', docCount: 0 }); });
   OB = null; rollover(b); save(); location.hash = '#home'; render();
 }
 A.obNext = function(){ obRead(); if(OB.i < 5){ OB.i++; onb(); } else obDone(); };
 A.obSkip = obDone;
 
-/* =========================================================
-   الثيم والتشغيل
-   ========================================================= */
 function applyTheme(){
   var d = S.settings.dark ?? matchMedia('(prefers-color-scheme:dark)').matches;
   document.documentElement.dataset.theme = d ? 'dark' : 'light';
@@ -1305,7 +1081,9 @@ function applyTheme(){
 }
 function tick(){
   if(!S.settings.done) return;
-  checkAlarms();
+  checkAlarmLoop();
+  var clk = $('#live_iq_time');
+  if(clk) clk.textContent = '🇮🇶 ' + getIraqTimeStr();
   if(rollover(B())) save();
   if($('#sh').hidden && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) render();
 }
@@ -1315,9 +1093,24 @@ function boot(){
     load(); applyTheme();
     if(S.settings.done){ rollover(B()); save(); }
     render();
-    document.addEventListener('click', function(e){ var el = e.target.closest('[data-a]'); if(el && A[el.dataset.a]) A[el.dataset.a](el.dataset, el); });
+    
+    // فك قفل الصوت عند أول لمسة
+    document.addEventListener('click', function(e){
+      initAudio();
+      var el = e.target.closest('[data-a]');
+      if(el && A[el.dataset.a]) A[el.dataset.a](el.dataset, el);
+    });
+    
+    // دعم مفتاح Enter في إجابة المنبه
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && e.target && e.target.id === 'alarm_ans'){
+        A.submitAlarmAns();
+      }
+    });
+
     document.addEventListener('input', function(e){ if(e.target.id === 'q'){ F.q = e.target.value; $('#wl').innerHTML = weekList(B()); } });
 
+    // رفع صورة جدول المحاضرات
     var ttInput = $('#tt_fi');
     if(ttInput){
       ttInput.addEventListener('change', function(e){
@@ -1341,12 +1134,40 @@ function boot(){
             var b = B();
             b.timetableImg = base64;
             if(save()){ closeSheet(); render(); toast('تم حفظ جدول المحاضرات بنجاح ✓'); }
-            else { toast('تعذر الحفظ: حجم الصورة كبير جداً'); }
+            else { toast('تعذر الحفظ: مساحة التخزين ممتلئة'); }
           };
           img.src = evt.target.result;
         };
         reader.readAsDataURL(file);
         ttInput.value = '';
+      });
+    }
+
+    // رفع ملفات المواد (PDF / صور) إلى IndexedDB
+    var docInput = $('#sub_doc_fi');
+    if(docInput){
+      docInput.addEventListener('change', async function(e){
+        var file = e.target.files && e.target.files[0];
+        if(!file || !curSubDocsId) return;
+        var docObj = {
+          id: uid(),
+          sid: curSubDocsId,
+          name: file.name,
+          size: file.size,
+          type: file.type || 'application/octet-stream',
+          blob: file,
+          date: iso(nowIQ())
+        };
+        await idbPut(docObj);
+        var sub = B().subjects.find(function(s){ return s.id === curSubDocsId; });
+        if(sub){
+          var docs = await idbGetAll(curSubDocsId);
+          sub.docCount = docs.length;
+          save();
+        }
+        toast('تم رفع الملف بنجاح ✓');
+        docInput.value = '';
+        A.openSubDocs({ id: curSubDocsId, name: (sub ? sub.name : '') });
       });
     }
 
@@ -1362,14 +1183,15 @@ function boot(){
           var o = null;
           try { o = JSON.parse(r.result); } catch(err){}
           if(!validate(o)) toast('الملف غير صالح — لم يتم تغيير بياناتك');
-          else ask('سيتم استبدال بياناتك الحالية بالنسخة المستوردة.', 'استيراد', function(){ S = o; S.settings.done = true; if(!Array.isArray(S.alarms)) S.alarms = []; rollover(B()); save(); applyTheme(); render(); toast('تم استيراد البيانات ✓'); }, false);
+          else ask('سيتم استبدال بياناتك الحالية بالنسخة المستوردة.', 'استيراد', function(){ S = o; S.settings.done = true; rollover(B()); save(); applyTheme(); render(); toast('تم استيراد البيانات ✓'); }, false);
           t.value = '';
         };
         r.readAsText(t.files[0]);
       }
     });
+
     addEventListener('hashchange', function(){ closeSheet(); render(); scrollTo(0, 0); });
-    setInterval(tick, 20000);
+    setInterval(tick, 1000); // تحديث الساعة الحية وفحص المنبه كل ثانية
     document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
 
     if('serviceWorker' in navigator && /^https?:/.test(location.protocol)){
