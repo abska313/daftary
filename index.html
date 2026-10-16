@@ -806,7 +806,7 @@ var credit = '<div class="ft">'
   + '<a href="https://t.me/di2ix" target="_blank" rel="noopener" class="social-pill tg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>قناة التليكرام</a>'
   + '<a href="https://youtube.com/@5k50m?si=R9P4_kjlhVzZwmK-" target="_blank" rel="noopener" class="social-pill yt"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/></svg>قناة اليوتيوب</a>'
   + '</div>'
-  + '<small class="mu">صُنع بحب لخدمة الطلبة الجامعيين 🎓</small>'
+  + '<small class="mu">صُنع بحب لخدمة الطلبة  🎓</small>'
   + '</div>';
 
 var DB_NAME = 'daftari_files_db', DB_STORE = 'sub_docs';
@@ -2028,11 +2028,10 @@ function boot(){
 }
 if(typeof document !== 'undefined') boot();
 </script>
-  <!-- =========================================================
+<!-- =========================================================
      نظام المساعد الذكي المطور (Gemini AI Multi-Chat & Memory)
      ========================================================= -->
 <style>
-/* حاوية الشات الكلية */
 .ai-modal-wrapper {
   display: flex;
   flex-direction: column;
@@ -2040,7 +2039,7 @@ if(typeof document !== 'undefined') boot();
   max-height: 640px;
 }
 
-/* شريط رأس الشات مع مبدّل المحادثات */
+/* شريط رأس الشات مع زر المحادثات التفاعلي */
 .ai-top-bar {
   display: flex;
   align-items: center;
@@ -2050,20 +2049,25 @@ if(typeof document !== 'undefined') boot();
   margin-bottom: 8px;
   gap: 6px;
 }
-.ai-chat-selector {
-  flex: 1;
-  min-width: 0;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 6px 10px;
-  border-radius: 12px;
-  min-height: 36px;
-  margin: 0;
+
+.ai-chat-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: var(--surface2, #EDF3EF);
   border: 1px solid var(--border, #D8E3DC);
+  border-radius: 14px;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.88rem;
   color: var(--text, #0D1C16);
-  text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 65%;
+  transition: transform 0.1s, border-color 0.15s;
+}
+.ai-chat-pill-btn:active {
+  transform: scale(0.96);
+  border-color: var(--gold, #D4AF37);
 }
 
 /* منطقة عرض الرسائل */
@@ -2077,7 +2081,6 @@ if(typeof document !== 'undefined') boot();
   scroll-behavior: smooth;
 }
 
-/* فقاعة رسالة المستخدم */
 .chat-row-user {
   display: flex;
   justify-content: flex-start;
@@ -2095,7 +2098,6 @@ if(typeof document !== 'undefined') boot();
   border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
-/* فقاعة رسالة الذكاء الاصطناعي */
 .chat-row-bot {
   display: flex;
   justify-content: flex-end;
@@ -2153,7 +2155,6 @@ if(typeof document !== 'undefined') boot();
   margin-bottom: 6px;
 }
 
-/* مؤشر التفكير */
 .ai-typing-loader {
   display: flex;
   align-items: center;
@@ -2178,7 +2179,6 @@ if(typeof document !== 'undefined') boot();
   100% { opacity: 1; transform: scale(1.2); }
 }
 
-/* الاقتراحات السريعة */
 .ai-quick-prompts {
   display: flex;
   gap: 6px;
@@ -2201,7 +2201,6 @@ if(typeof document !== 'undefined') boot();
 }
 .ai-chip-pill:active { transform: scale(0.94); border-color: var(--gold, #D4AF37); }
 
-/* شريط الإدخال المدمج */
 .ai-dock-input {
   display: flex;
   align-items: center;
@@ -2267,7 +2266,6 @@ if(typeof document !== 'undefined') boot();
   var ACTIVE_CHAT_KEY = 'daftari_ai_active_chat_id';
   var aiPendingFile = null;
 
-  // جلب المحادثات المخزنة
   function getStoredChats() {
     try {
       var raw = localStorage.getItem(CHATS_STORAGE_KEY);
@@ -2288,9 +2286,7 @@ if(typeof document !== 'undefined') boot();
   }
 
   function saveStoredChats(chats) {
-    try {
-      localStorage.setItem(CHATS_STORAGE_KEY, JSON.stringify(chats));
-    } catch(e) {}
+    try { localStorage.setItem(CHATS_STORAGE_KEY, JSON.stringify(chats)); } catch(e) {}
   }
 
   function getActiveChatId() {
@@ -2314,7 +2310,6 @@ if(typeof document !== 'undefined') boot();
     return found || chats[0];
   }
 
-  // زرع حقل الملفات المخفي
   if (!document.getElementById('ai_file_input')) {
     var fi = document.createElement('input');
     fi.id = 'ai_file_input';
@@ -2337,7 +2332,6 @@ if(typeof document !== 'undefined') boot();
     });
   }
 
-  // زرع زر الروبوت في الشريط العلوي تلقائياً
   function injectAIHeaderBtn() {
     var actions = document.querySelector('.hdr-actions');
     if (actions && !document.getElementById('ai_hdr_btn')) {
@@ -2353,17 +2347,14 @@ if(typeof document !== 'undefined') boot();
   injectAIHeaderBtn();
   setInterval(injectAIHeaderBtn, 1500);
 
-  // زرع زر الروبوت 🤖 تلقائياً بجانب كل مادة في صفحة المواد
   function patchSubjectsUI() {
     if (typeof window.pSubj === 'function' && !window.pSubj._aiPatched) {
       var origPSubj = window.pSubj;
       window.pSubj = function(b) {
         var html = origPSubj(b);
-        // إضافة زر الروبوت في شريط أزرار المادة العلوي
         html = html.replace(/<button class="st" data-a="editSub" data-id="([^"]+)"/g, function(match, sid) {
           return '<button class="st" data-a="openSubjectAIChat" data-sid="' + sid + '" title="اسأل ذكاء المادة" style="color:var(--gold);font-size:1.05rem">🤖</button>' + match;
         });
-        // إضافة زر المساعد في صف الأزرار السفلي للمادة
         html = html.replace(/<button class="btn ghost sm" data-a="manageLinks" data-id="([^"]+)"/g, function(match, sid) {
           return '<button class="btn ghost sm" data-a="openSubjectAIChat" data-sid="' + sid + '" style="border-color:var(--gold)">🤖 ذكاء المادة</button>' + match;
         });
@@ -2375,7 +2366,6 @@ if(typeof document !== 'undefined') boot();
   patchSubjectsUI();
   setInterval(patchSubjectsUI, 1500);
 
-  // تنسيق نصوص الإجابات الذكية
   function formatAIMarkdown(text) {
     if (!text) return '';
     var lines = String(text).split('\n');
@@ -2424,7 +2414,6 @@ if(typeof document !== 'undefined') boot();
 
   window.A = window.A || {};
 
-  // فتح المحادثة الخاصة بمادة معينة من زر المادة
   window.A.openSubjectAIChat = function(d) {
     var sid = d.sid;
     var b = (typeof window.B === 'function') ? window.B() : null;
@@ -2432,12 +2421,10 @@ if(typeof document !== 'undefined') boot();
     var subName = sub ? sub.name : 'المادة';
 
     var chats = getStoredChats();
-    // البحث إن كانت هناك محادثة سابقة لهذه المادة
     var existing = chats.find(function(c){ return c.subjectId === sid; });
     if (existing) {
       setActiveChatId(existing.id);
     } else {
-      // إنشاء محادثة جديدة مخصصة لهذه المادة
       var newChat = {
         id: 'chat_sub_' + sid,
         title: '📚 ' + subName,
@@ -2451,12 +2438,9 @@ if(typeof document !== 'undefined') boot();
       saveStoredChats(chats);
       setActiveChatId(newChat.id);
     }
-
     window.A.openAIChat();
-    toast('محادثة: ' + subName + ' 📚');
   };
 
-  // فتح نافذة الذكاء الاصطناعي
   window.A.openAIChat = function() {
     var apiKey = (window.S && window.S.settings && window.S.settings.geminiApiKey) || '';
     if (!apiKey) {
@@ -2473,18 +2457,10 @@ if(typeof document !== 'undefined') boot();
     renderAIChatSheet();
   };
 
-  // رسم نافذة الشات والمحادثات
+  // واجهة عرض المحادثة
   function renderAIChatSheet(isLoading) {
-    var chats = getStoredChats();
     var activeChat = getActiveChat();
     var messages = activeChat.messages || [];
-
-    // قائمة الخيارات للمحادثات
-    var selectOptions = chats.map(function(c) {
-      return '<option value="' + esc(c.id) + '" ' + (c.id === activeChat.id ? 'selected' : '') + '>'
-        + esc(c.title)
-        + '</option>';
-    }).join('') + '<option value="__new__">➕ إنشاء محادثة جديدة...</option>';
 
     var historyHtml = messages.length ? messages.map(function(msg) {
       if (msg.role === 'user') {
@@ -2504,7 +2480,7 @@ if(typeof document !== 'undefined') boot();
     }).join('') : '<div style="text-align:center;padding:36px 16px;color:var(--text-secondary)">'
       + '<div style="font-size:2.8rem;margin-bottom:8px">🤖</div>'
       + '<b style="font-size:1.05rem;color:var(--text)">' + esc(activeChat.title) + '</b>'
-      + '<p class="mu" style="font-size:0.84rem;margin-top:4px">أنا مستعد ومواكب لأسئلتك! اسألني عن أي موضوع أو أرفق ملزمة لنبدأ.</p>'
+      + '<p class="mu" style="font-size:0.84rem;margin-top:4px">أنا مستعد لمساعدتك! اسألني عن أي موضوع أو أرفق ملزمة لنبدأ المذاكرة.</p>'
       + '</div>';
 
     var loadingHtml = isLoading ? ('<div class="ai-typing-loader">'
@@ -2519,14 +2495,12 @@ if(typeof document !== 'undefined') boot();
 
     sheet('<div class="ai-modal-wrapper">'
       + '<div class="ai-top-bar">'
-      + '<div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">'
-      + '<select class="ai-chat-selector" id="ai_chat_select" data-a="switchChatSelect">'
-      + selectOptions
-      + '</select>'
-      + '</div>'
+      + '<button class="ai-chat-pill-btn" data-a="openChatListModal" title="اضغط لعرض وتبديل كل المحادثات">'
+      + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(activeChat.title) + '</span>'
+      + '<span style="font-size:0.75rem;color:var(--gold,#D4AF37)">▼</span>'
+      + '</button>'
       + '<div style="display:flex;gap:4px;flex:none">'
       + '<button class="btn ghost sm" data-a="addNewChatAction" title="محادثة جديدة" style="padding:4px 9px">➕</button>'
-      + '<button class="btn ghost sm" data-a="deleteCurrentChatAction" title="حذف هذه المحادثة" style="padding:4px 9px">🗑️</button>'
       + '<button class="btn ghost sm" data-a="configGeminiKey" title="ضبط المفتاح" style="padding:4px 9px">⚙️</button>'
       + '<button class="btn ghost sm" data-a="close" style="padding:4px 9px">✕</button>'
       + '</div>'
@@ -2551,28 +2525,43 @@ if(typeof document !== 'undefined') boot();
     setTimeout(function() {
       var box = document.getElementById('aiMsgStreamBox');
       if (box) box.scrollTop = box.scrollHeight;
-      var inp = document.getElementById('ai_user_prompt');
-      if (inp && !isLoading) inp.focus();
     }, 80);
   }
 
-  // التبديل بين المحادثات من القائمة
-  window.A.switchChatSelect = function() {
-    var sel = document.getElementById('ai_chat_select');
-    if (!sel) return;
-    if (sel.value === '__new__') {
-      window.A.addNewChatAction();
-    } else {
-      setActiveChatId(sel.value);
-      renderAIChatSheet();
-    }
+  // نافذة عرض قائمة المحادثات (تفتح بضغطة زر دون أي مشاكل)
+  window.A.openChatListModal = function() {
+    var chats = getStoredChats();
+    var activeId = getActiveChatId();
+
+    var listHtml = chats.map(function(c) {
+      var isActive = (c.id === activeId);
+      return '<div class="file-row" style="cursor:pointer;' + (isActive ? 'border-color:var(--gold,#D4AF37);background:var(--gold-subtle,rgba(212,175,55,0.1))' : '') + '">'
+        + '<div style="flex:1;min-width:0" data-a="selectChatById" data-cid="' + esc(c.id) + '">'
+        + '<b>' + esc(c.title) + (isActive ? ' <span style="color:var(--gold,#D4AF37);font-size:0.8rem">● الحالية</span>' : '') + '</b>'
+        + '<small class="mu" style="display:block">' + ((c.messages || []).length) + ' رسائل مسجلة</small>'
+        + '</div>'
+        + (chats.length > 1 ? '<button class="st" data-a="deleteChatById" data-cid="' + esc(c.id) + '" title="حذف المحادثة" style="color:var(--danger,#B91C1C)">🗑️</button>' : '')
+        + '</div>';
+    }).join('');
+
+    sheet('<h2>🗂️ قائمة المحادثات المحفوظة</h2>'
+      + '<p class="mu">اختر محادثة المادة التي تريد فتحها، أو أنشئ محادثة جديدة:</p>'
+      + '<button class="btn gold block sm" data-a="addNewChatAction" style="margin-bottom:12px">➕ إنشاء محادثة جديدة لمادة أخرى</button>'
+      + '<div style="max-height:50vh;overflow-y:auto;margin-bottom:12px">' + listHtml + '</div>'
+      + '<button class="btn ghost block" data-a="openAIChat">← رجوع للمحادثة الحالية</button>');
+  };
+
+  // اختيار المحادثة من القائمة
+  window.A.selectChatById = function(d) {
+    setActiveChatId(d.cid);
+    renderAIChatSheet();
   };
 
   // إنشاء محادثة جديدة
   window.A.addNewChatAction = function() {
     sheet('<h2>➕ إنشاء محادثة جديدة</h2>'
       + '<div class="card" style="background:var(--surface2,#EDF3EF)">'
-      + '<p class="mu">اختر عنواناً للمحادثة (مثلاً: محاسبة دولية، مراجعة المد، بحوث...):</p>'
+      + '<p class="mu">اكتب عنواناً للمحادثة (مثلاً: محاسبة تكاليف، كوز الأسبوع، مشروع تخرج...):</p>'
       + '<input id="new_chat_title_input" placeholder="عنوان المحادثة">'
       + '<div class="r2" style="margin-top:10px">'
       + '<button class="btn gold block" data-a="confirmNewChat">إنشاء وبدء الشات ✓</button>'
@@ -2600,24 +2589,17 @@ if(typeof document !== 'undefined') boot();
     toast('تم إنشاء: ' + title + ' ✓');
   };
 
-  // حذف المحادثة الحالية
-  window.A.deleteCurrentChatAction = function() {
-    var chats = getStoredChats();
-    if (chats.length <= 1) {
-      // تفريغ الرسائل فقط لو كانت المحادثة الوحيدة
-      chats[0].messages = [];
+  // حذف محادثة محددة
+  window.A.deleteChatById = function(d) {
+    var cid = d.cid;
+    ask('هل تريد حذف هذه المحادثة بكل رسائلها؟', 'حذف المحادثة', function() {
+      var chats = getStoredChats();
+      chats = chats.filter(function(c){ return c.id !== cid; });
       saveStoredChats(chats);
-      renderAIChatSheet();
-      toast('تم مسح رسائل المحادثة ✓');
-      return;
-    }
-
-    var activeId = getActiveChatId();
-    ask('هل تريد حذف هذه المحادثة بالكامل؟', 'حذف المحادثة', function() {
-      chats = chats.filter(function(c){ return c.id !== activeId; });
-      saveStoredChats(chats);
-      setActiveChatId(chats[0].id);
-      renderAIChatSheet();
+      if (getActiveChatId() === cid) {
+        setActiveChatId(chats[0].id);
+      }
+      window.A.openChatListModal();
       toast('تم حذف المحادثة.');
     });
   };
@@ -2681,7 +2663,6 @@ if(typeof document !== 'undefined') boot();
     }
   };
 
-  // إرسال الرسالة وبناء سياق المحادثة الكامل (Multi-Turn Context)
   window.A.sendAIMsg = async function() {
     var apiKey = (window.S && window.S.settings && window.S.settings.geminiApiKey) || '';
     if (!apiKey) return window.A.openAIChat();
@@ -2697,25 +2678,21 @@ if(typeof document !== 'undefined') boot();
     var activeChat = getActiveChat();
     activeChat.messages = activeChat.messages || [];
 
-    // إضافة رسالة المستخدم في ذاكرة المحادثة
     activeChat.messages.push({
       role: 'user',
       text: text || (fileToSend ? 'يرجى تحليل هذا المستند واستخراج أهم النقاط منه.' : ''),
       file: fileToSend ? fileToSend.name : null
     });
 
-    // حفظ المحادثة
     var allChats = getStoredChats();
     var idx = allChats.findIndex(function(c){ return c.id === activeChat.id; });
     if (idx !== -1) allChats[idx] = activeChat;
     saveStoredChats(allChats);
 
-    // إظهار مؤشر التحميل
     renderAIChatSheet(true);
 
-    // بناء سياق المحادثة السابق (Multi-turn conversation history)
     var conversationPayload = [];
-    var prevTurns = activeChat.messages.slice(0, -1).slice(-14); // آخر 14 رسالة لضمان السرعة والذاكرة
+    var prevTurns = activeChat.messages.slice(0, -1).slice(-14);
     prevTurns.forEach(function(m) {
       conversationPayload.push({
         role: m.role === 'model' ? 'model' : 'user',
@@ -2723,7 +2700,6 @@ if(typeof document !== 'undefined') boot();
       });
     });
 
-    // إضافة الرسالة الحالية
     var currentParts = [];
     if (fileToSend) {
       currentParts.push({
@@ -2736,7 +2712,6 @@ if(typeof document !== 'undefined') boot();
     currentParts.push({ text: text || 'يرجى الإجابة بناءً على المستند أو المحادثة السابقة.' });
     conversationPayload.push({ role: 'user', parts: currentParts });
 
-    // تنظيف تتابع الأدوار لضمان توافق معايير Gemini الصارمة
     var cleanContents = [];
     conversationPayload.forEach(function(turn) {
       if (!cleanContents.length) {
@@ -2792,7 +2767,6 @@ if(typeof document !== 'undefined') boot();
       activeChat.messages.push({ role: 'model', text: '⚠️ عذراً: ' + (lastError ? lastError.message : 'تعذر الاتصال') + '\nتأكد من اتصال الإنترنت وصحة المفتاح.' });
     }
 
-    // حفظ المحادثة المحدثة
     var chatsAfter = getStoredChats();
     var cIdx = chatsAfter.findIndex(function(c){ return c.id === activeChat.id; });
     if (cIdx !== -1) chatsAfter[cIdx] = activeChat;
@@ -2801,17 +2775,9 @@ if(typeof document !== 'undefined') boot();
     renderAIChatSheet(false);
   };
 
-  // دعم زر Enter للإرسال السريع
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target && e.target.id === 'ai_user_prompt') {
       window.A.sendAIMsg();
-    }
-  });
-
-  // الاستماع لتغيير القائمة المنسدلة للمحادثات
-  document.addEventListener('change', function(e) {
-    if (e.target && e.target.id === 'ai_chat_select') {
-      window.A.switchChatSelect();
     }
   });
 })();
